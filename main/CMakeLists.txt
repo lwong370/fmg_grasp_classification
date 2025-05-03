@@ -6,7 +6,7 @@ target_compile_options(${COMPONENT_LIB} PRIVATE -std=gnu++17)
 spiffs_create_partition_image(storage ../partition FLASH_IN_PROJECT)
 
 # idf_component_register(
-#     SRCS "bluetooth_ble.c" "GPIO_Example.cpp" "../liblinear/linear.cpp"
+#     SRCS "GPIO_Example.cpp" "../liblinear/linear.cpp"
 #     INCLUDE_DIRS "." "../liblinear"
 #     REQUIRES bt nvs_flash esp_driver_gpio spiffs driver esp_adc 
 # )
