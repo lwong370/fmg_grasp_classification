@@ -839,3 +839,10 @@ C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/es
 C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/feature_extraction/CMakeFiles/install.dir
 C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/feature_extraction/CMakeFiles/install/local.dir
 C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/feature_extraction/CMakeFiles/install/strip.dir
+C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/predictor/CMakeFiles/__idf_predictor.dir
+C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/predictor/CMakeFiles/edit_cache.dir
+C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/predictor/CMakeFiles/rebuild_cache.dir
+C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/predictor/CMakeFiles/list_install_components.dir
+C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/predictor/CMakeFiles/install.dir
+C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/predictor/CMakeFiles/install/local.dir
+C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/predictor/CMakeFiles/install/strip.dir

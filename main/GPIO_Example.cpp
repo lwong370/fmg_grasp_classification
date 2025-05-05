@@ -17,6 +17,7 @@
 // #include "../src/fsr_reader.h"
 #include "predict.h"
 #include "feature_extraction.h"
+#include "predict.h"
 // #include "bluetooth_ble.h"
 
 #define TAG "MY_APP"

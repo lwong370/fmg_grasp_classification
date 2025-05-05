@@ -552,3 +552,8 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/feature_extraction/cmake_install.cmake")
 endif()
 
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/predictor/cmake_install.cmake")
+endif()
+

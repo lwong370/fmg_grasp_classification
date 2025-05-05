@@ -1,5 +1,4 @@
-#pragma once
-#include "lda_model.h"
+#include "predict.h"
 
 void normalize(const double input_raw[NUM_FEATURES], double input_scaled[NUM_FEATURES]) {
     for (int i = 0; i < NUM_FEATURES; ++i) {
