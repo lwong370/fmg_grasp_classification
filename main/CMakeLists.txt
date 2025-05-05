@@ -1,4 +1,4 @@
-idf_component_register(SRCS "GPIO_Example.cpp" "../liblinear/linear.cpp"
+idf_component_register(SRCS "GPIO_Example.cpp" "../liblinear/linear.cpp" "../components/feature_extraction/feature_extraction.cpp"
                        INCLUDE_DIRS "." "../liblinear")
 
 set(CMAKE_CXX_STANDARD 17)
