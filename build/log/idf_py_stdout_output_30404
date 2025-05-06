@@ -1,0 +1,72 @@
+[1/12] Performing build step for 'bootloader'
+[1/1] cmd.exe /C "cd /D C:\Users\lanaw\BEAR_lab\pooh_band\learning_for_dev\esp\esp_lda_classify\build\bootloader\esp-idf\esptool_py && C:\Users\lanaw\esp\python_env\idf5.3_py3.11_env\Scripts\python.exe C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x0 C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/bootloader/bootloader.bin"
+Bootloader binary size 0x5260 bytes. 0x2da0 bytes (36%) free.
+[2/10] Building C object esp-idf/bluetooth/CMakeFiles/__idf_bluetooth.dir/nimble_ble.c.obj
+[3/10] Linking C static library esp-idf\bluetooth\libbluetooth.a
+[4/10] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/__/components/bluetooth/nimble_ble.c.obj
+cc1.exe: warning: command-line option '-std=gnu++17' is valid for C++/ObjC++ but not for C
+[5/10] Linking C static library esp-idf\main\libmain.a
+[6/10] Generating ld/sections.ld
+[7/10] Linking CXX executable GPIO_Example.elf
+[8/10] Generating binary image from built executable
+esptool.py v4.8.1
+Creating esp32s3 image...
+Merged 2 ELF sections
+Successfully created esp32s3 image.
+Generated C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/GPIO_Example.bin
+[9/10] cmd.exe /C "cd /D C:\Users\lanaw\BEAR_lab\pooh_band\learning_for_dev\esp\esp_lda_classify\build\esp-idf\esptool_py && C:\Users\lanaw\esp\python_env\idf5.3_py3.11_env\Scripts\python.exe C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/partition_table/check_sizes.py --offset 0x8000 partition --type app C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/partition_table/partition-table.bin C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/GPIO_Example.bin"
+GPIO_Example.bin binary size 0x89c70 bytes. Smallest app partition is 0x177000 bytes. 0xed390 bytes (63%) free.
+[9/10] cmd.exe /C "cd /D C:\Users\lanaw\esp\frameworks\esp-idf-v5.3.1\components\esptool_py && C:\Users\lanaw\esp\tools\cmake\3.24.0\bin\cmake.exe -D IDF_PATH=C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1 -D SERIAL_TOOL=C:/Users/lanaw/esp/python_env/idf5.3_py3.11_env/Scripts/python.exe;;C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esptool_py/esptool/esptool.py;--chip;esp32s3 -D SERIAL_TOOL_ARGS=--before=default_reset;--after=hard_reset;write_flash;@flash_args -D WORKING_DIRECTORY=C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build -P C:/Users/lanaesptool.py --chip esp32s3 -p COM3 -b 460800 --before=default_reset --after=hard_reset write_flash --flash_mode dio --flash_freq 80m --flash_size 8MB 0x0 bootloader/bootloader.bin 0x10000 GPIO_Example.bin 0x8000 partition_table/partition-table.bin
+esptool.py v4.8.1
+Serial port COM3
+Connecting...
+Chip is ESP32-S3 (QFN56) (revision v0.1)
+Features: WiFi, BLE, Embedded Flash 8MB (GD)
+Crystal is 40MHz
+MAC: dc:54:75:ca:f1:fc
+Uploading stub...
+Running stub...
+Stub running...
+Changing baud rate to 460800
+Changed.
+Configuring flash size...
+Flash will be erased from 0x00000000 to 0x00005fff...
+Flash will be erased from 0x00010000 to 0x00099fff...
+Flash will be erased from 0x00008000 to 0x00008fff...
+SHA digest in image updated
+Compressed 21088 bytes to 13052...
+Writing at 0x00000000... (100 %)
+Wrote 21088 bytes (13052 compressed) at 0x00000000 in 0.3 seconds (effective 558.7 kbit/s)...
+Hash of data verified.
+Compressed 564336 bytes to 336241...
+Writing at 0x00010000... (4 %)
+Writing at 0x0001c6f0... (9 %)
+Writing at 0x00022829... (14 %)
+Writing at 0x00028139... (19 %)
+Writing at 0x00031554... (23 %)
+Writing at 0x00037703... (28 %)
+Writing at 0x0003dc32... (33 %)
+Writing at 0x00043ef0... (38 %)
+Writing at 0x00049df2... (42 %)
+Writing at 0x00050237... (47 %)
+Writing at 0x00055ffa... (52 %)
+Writing at 0x0005c73e... (57 %)
+Writing at 0x000625cb... (61 %)
+Writing at 0x00067e87... (66 %)
+Writing at 0x0006d6bf... (71 %)
+Writing at 0x0007303f... (76 %)
+Writing at 0x0007bbf4... (80 %)
+Writing at 0x000848a1... (85 %)
+Writing at 0x0008a6be... (90 %)
+Writing at 0x0008ffab... (95 %)
+Writing at 0x000966f6... (100 %)
+Wrote 564336 bytes (336241 compressed) at 0x00010000 in 3.7 seconds (effective 1206.6 kbit/s)...
+Hash of data verified.
+Compressed 3072 bytes to 105...
+Writing at 0x00008000... (100 %)
+Wrote 3072 bytes (105 compressed) at 0x00008000 in 0.0 seconds (effective 644.0 kbit/s)...
+Hash of data verified.
+
+Leaving...
+Hard resetting via RTS pin...
+w/esp/frameworks/esp-idf-v5.3.1/components/esptool_py/run_serial_tool.cmake"

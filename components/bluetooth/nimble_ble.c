@@ -78,38 +78,48 @@ static int ble_gap_event(struct ble_gap_event *event, void *arg)
 // Define the BLE connection
 void ble_app_advertise(void)
 {
-    // GAP - device name definition
     struct ble_hs_adv_fields fields;
-    const char *device_name = "PoohBand";
     memset(&fields, 0, sizeof(fields));
-    // device_name = ble_svc_gap_device_name(); // Read the BLE device name
-    fields.name = (uint8_t *)device_name;
-    fields.name_len = strlen(device_name);
+    fields.name = (uint8_t *)"PoohBand";
+    fields.name_len = strlen("PoohBand");
     fields.name_is_complete = 1;
-    ble_gap_adv_set_fields(&fields);
 
-    // GAP - device connectivity definition
-    struct ble_gap_adv_params adv_params;
-    memset(&adv_params, 0, sizeof(adv_params));
-    adv_params.conn_mode = BLE_GAP_CONN_MODE_UND; // connectable or non-connectable
-    adv_params.disc_mode = BLE_GAP_DISC_MODE_GEN; // discoverable or non-discoverable
-    adv_params.itvl_min = 0x100; // 160ms
-    adv_params.itvl_max = 0x200; // 320ms
-    ble_gap_adv_start(ble_addr_type, NULL, BLE_HS_FOREVER, &adv_params, ble_gap_event, NULL);
+    int rc = ble_gap_adv_set_fields(&fields);
+    if (rc != 0) {
+        ESP_LOGE("BLE", "Failed to set advertisement data; rc=%d", rc);
+        return;
+    }
+
+    struct ble_gap_adv_params adv_params = {0};
+    adv_params.conn_mode = BLE_GAP_CONN_MODE_UND;
+    adv_params.disc_mode = BLE_GAP_DISC_MODE_GEN;
+    adv_params.itvl_min = 0x80;
+    adv_params.itvl_max = 0x100;
+
+    rc = ble_gap_adv_start(ble_addr_type, NULL, BLE_HS_FOREVER, &adv_params, ble_gap_event, NULL);
+    if (rc != 0) {
+        ESP_LOGE("BLE", "Failed to start advertising; rc=%d", rc);
+    }
 }
 
 // The application
 void ble_app_on_sync(void)
 {
-    ble_hs_id_infer_auto(0, &ble_addr_type); // Determines the best address type automatically
-    
-    // Set the BLE device name
-    ble_svc_gap_device_name_set("PoohBand");
-    
-    ble_app_advertise();                     // Define the BLE connection
+    // Get a valid BLE address type
+    int rc = ble_hs_id_infer_auto(0, &ble_addr_type);
+    if (rc != 0) {
+        ESP_LOGE("BLE", "ble_hs_id_infer_auto failed: %d", rc);
+        return;
+    }
 
-    // Start GATT server
-    ble_gatts_start();
+    // Confirm GAP device name was set
+    rc = ble_svc_gap_device_name_set("PoohBand");
+    if (rc != 0) {
+        ESP_LOGE("BLE", "Failed to set device name: %d", rc);
+    }
+
+    // Now that everything is synced, advertise
+    ble_app_advertise();
 }
 
 // The infinite task
@@ -137,36 +147,79 @@ void host_task(void *param)
 
 void ble_init()
 {
-    #if !CONFIG_BT_NIMBLE_ENABLED
-        #error "NimBLE must be enabled in sdkconfig!"
-    #endif
+    esp_err_t ret;
 
-    // 1. Initialize NVS flash (with error handling)
-    esp_err_t ret = nvs_flash_init();
+    // Initialize NVS
+    ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         ESP_ERROR_CHECK(nvs_flash_erase());
         ret = nvs_flash_init();
     }
     ESP_ERROR_CHECK(ret);
 
-    // 2. Initialize BLE controller (MUST come before nimble_port_init)
-    ESP_ERROR_CHECK(esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT));
-    
-    // 3. Initialize the host stack
-    nimble_port_init();
+    // // Release Classic BT memory
+    // ret = esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);
+    // if (ret != ESP_OK) {
+    //     ESP_LOGE(TAG, "Failed to release Classic BT memory: %s", esp_err_to_name(ret));
+    //     return;
+    // }
 
-    // 4. Configure GAP and GATT services
+    // // Check controller status
+    // esp_bt_controller_status_t status = esp_bt_controller_get_status();
+    // ESP_LOGI(TAG, "BT controller status before init: %d", status);
+    // if (status == ESP_BT_CONTROLLER_STATUS_IDLE) {
+    //     // Initialize controller
+    //     esp_bt_controller_config_t bt_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();
+    //     ret = esp_bt_controller_init(&bt_cfg);
+    //     if (ret != ESP_OK) {
+    //         ESP_LOGE(TAG, "Bluetooth controller initialization failed: %s", esp_err_to_name(ret));
+    //         return;
+    //     }
+    // } else {
+    //     ESP_LOGW(TAG, "Bluetooth controller already initialized or in unexpected state: %d", status);
+    // }
+
+    // // Enable controller
+    // ret = esp_bt_controller_enable(ESP_BT_MODE_BLE);
+    // if (ret != ESP_OK) {
+    //     ESP_LOGE(TAG, "Bluetooth controller enable failed: %s", esp_err_to_name(ret));
+    //     return;
+    // }
+    // ESP_ERROR_CHECK(esp_nimble_hci_and_controller_init());
+
+    // Initialize NimBLE
+    ret = nimble_port_init();
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "NimBLE port initialization failed: %s", esp_err_to_name(ret));
+        return;
+    }
+
+    // Initialize GAP and GATT
     ble_svc_gap_init();
-    ble_svc_gap_device_name_set(DEVICE_NAME);
     ble_svc_gatt_init();
 
-    // 5. Configure your GATT services (must happen before sync)
-    ble_gatts_count_cfg(gatt_svcs);  // Validate service config
-    ble_gatts_add_svcs(gatt_svcs);   // Add services
+    // Set device name
+    int rc = ble_svc_gap_device_name_set(DEVICE_NAME);
+    if (rc != 0) {
+        ESP_LOGE(TAG, "Failed to set device name: %d", rc);
+    }
 
-    // 6. Set the synchronization callback
+    // Configure GATT services
+    rc = ble_gatts_count_cfg(gatt_svcs);
+    if (rc != 0) {
+        ESP_LOGE(TAG, "Failed to count GATT services: %d", rc);
+    }
+
+    rc = ble_gatts_add_svcs(gatt_svcs);
+    if (rc != 0) {
+        ESP_LOGE(TAG, "Failed to add GATT services: %d", rc);
+    }
+
+    // Set sync callback
     ble_hs_cfg.sync_cb = ble_app_on_sync;
 
-    // 7. Start the FreeRTOS task
+    // Start host task
     nimble_port_freertos_init(host_task);
+
+    ESP_LOGI(TAG, "BLE initialization complete");
 }

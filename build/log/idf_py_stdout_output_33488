@@ -1,0 +1,513 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x15 (USB_UART_CHIP_RESET),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x400490cf
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x178c
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xcb8
+load:0x403cb700,len:0x2db0
+entry 0x403c8914
+[0;32mI (26) boot: ESP-IDF v5.3.1-dirty 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time May  5 2025 14:20:52[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (30) boot: chip revision: v0.1[0m
+[0;32mI (34) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (39) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (44) boot.esp32s3: SPI Flash Size : 8MB[0m
+[0;32mI (48) boot: Enabling RNG early entropy source...[0m
+[0;32mI (54) boot: Partition Table:[0m
+[0;32mI (57) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (65) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (72) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (79) boot:  2 factory          factory app      00 00 00010000 00177000[0m
+[0;32mI (87) boot: End of partition table[0m
+[0;32mI (91) esp_image: segment 0: paddr=00010020 vaddr=3c060020 size=1a1a4h (106916) map[0m
+[0;32mI (119) esp_image: segment 1: paddr=0002a1cc vaddr=3fc98b00 size=042f4h ( 17140) load[0m
+[0;32mI (123) esp_image: segment 2: paddr=0002e4c8 vaddr=40374000 size=01b50h (  6992) load[0m
+[0;32mI (126) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=56b48h (355144) map[0m
+[0;32mI (197) esp_image: segment 4: paddr=00086b70 vaddr=40375b50 size=12ec8h ( 77512) load[0m
+[0;32mI (214) esp_image: segment 5: paddr=00099a40 vaddr=600fe100 size=00004h (     4) load[0m
+[0;32mI (223) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (223) boot: Disabling RNG early entropy source...[0m
+[0;32mI (235) cpu_start: Multicore app[0m
+[0;32mI (244) cpu_start: Pro cpu start user code[0m
+[0;32mI (244) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (244) app_init: Application information:[0m
+[0;32mI (247) app_init: Project name:     GPIO_Example[0m
+[0;32mI (252) app_init: App version:      1.0. 1[0m
+[0;32mI (257) app_init: Compile time:     May  5 2025 14:22:33[0m
+[0;32mI (263) app_init: ELF file SHA256:  818c5df18...[0m
+[0;32mI (269) app_init: ESP-IDF:          v5.3.1-dirty[0m
+[0;32mI (274) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (279) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (284) efuse_init: Chip rev:         v0.1[0m
+[0;32mI (288) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (296) heap_init: At 3FC9F160 len 0004A5B0 (297 KiB): RAM[0m
+[0;32mI (302) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (308) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (314) heap_init: At 600FE104 len 00001EE4 (7 KiB): RTCRAM[0m
+[0;32mI (321) spi_flash: detected chip: gd[0m
+[0;32mI (324) spi_flash: flash io: dio[0m
+[0;32mI (329) sleep: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (335) sleep: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (342) coexist: coex firmware version: 4482466[0m
+[0;32mI (348) coexist: coexist rom version e7ae62f[0m
+[0;32mI (353) main_task: Started on CPU0[0m
+[0;32mI (363) main_task: Calling app_main()[0m
+[0;32mI (373) BLE_INIT: BT controller compile version [aa16a46][0m
+[0;32mI (373) BLE_INIT: Bluetooth MAC: dc:54:75:ca:f1:fe[0m
+[0;32mI (373) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10[0m
+[0;32mI (423) NimBLE: GAP procedure initiated: stop advertising.
+[0m
+[0;32mI (423) NimBLE: Failed to restore IRKs from store; status=8
+[0m
+[0;32mI (423) NimBLE: GAP procedure initiated: advertise; [0m
+[0;32mI (433) NimBLE: disc_mode=2[0m
+[0;32mI (433) NimBLE:  adv_channel_map=0 own_addr_type=0 adv_filter_policy=0 adv_itvl_min=128 adv_itvl_max=256[0m
+[0;32mI (443) NimBLE: 
+[0m
+[0;32mI (443) BLE-Server: BLE initialization complete[0m
+[0;32mI (453) main_task: Returned from app_main()[0m
+[0;32mI (493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (1993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (2993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (3993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (4993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (5993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (6993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (7993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (8993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (9993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (10993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (11993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (12993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (13993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (14993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (15993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (16993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (17993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (18993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (19993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (20993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21493) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21543) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21593) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21643) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21693) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21743) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21793) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21843) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21893) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21943) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (21993) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (22043) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (22093) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (22143) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (22193) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (22243) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (22293) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (22343) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (22393) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (22443) MY_APP: Prediction: 8 (WF)[0m
+[0;32mI (22493) MY_APP: Prediction: 8 (WF)[0m

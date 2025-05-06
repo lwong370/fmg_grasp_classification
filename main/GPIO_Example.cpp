@@ -163,6 +163,8 @@ void predict_task(void *pvParameter) {
 }
 
 extern "C" void app_main(void) {
+    ble_init();
+    
     feature_queue = xQueueCreate(FEATURE_QUEUE_LENGTH, sizeof(MAVFeature));
     if (feature_queue == NULL) {
         ESP_LOGE(TAG, "Failed to create feature queue.");
@@ -175,6 +177,6 @@ extern "C" void app_main(void) {
    // Grasp Prediction
    xTaskCreate(&predict_task, "predict_task", 4096, NULL, 5, NULL);
 
-    ble_init();
+    
     // xTaskCreate(ble_notify_task, "fmg_notify", 4096, NULL, 5, NULL);
 }

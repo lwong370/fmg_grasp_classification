@@ -1,0 +1,59 @@
+[1/5] cmd.exe /C "cd /D C:\Users\lanaw\BEAR_lab\pooh_band\learning_for_dev\esp\esp_lda_classify\build\esp-idf\esptool_py && C:\Users\lanaw\esp\python_env\idf5.3_py3.11_env\Scripts\python.exe C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/partition_table/check_sizes.py --offset 0x8000 partition --type app C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/partition_table/partition-table.bin C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/GPIO_Example.bin"
+GPIO_Example.bin binary size 0x89f50 bytes. Smallest app partition is 0x177000 bytes. 0xed0b0 bytes (63%) free.
+[2/5] Performing build step for 'bootloader'
+[1/1] cmd.exe /C "cd /D C:\Users\lanaw\BEAR_lab\pooh_band\learning_for_dev\esp\esp_lda_classify\build\bootloader\esp-idf\esptool_py && C:\Users\lanaw\esp\python_env\idf5.3_py3.11_env\Scripts\python.exe C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x0 C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/bootloader/bootloader.bin"
+Bootloader binary size 0x5260 bytes. 0x2da0 bytes (36%) free.
+[2/3] cmd.exe /C "cd /D C:\Users\lanaw\esp\frameworks\esp-idf-v5.3.1\components\esptool_py && C:\Users\lanaw\esp\tools\cmake\3.24.0\bin\cmake.exe -D IDF_PATH=C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1 -D SERIAL_TOOL=C:/Users/lanaw/esp/python_env/idf5.3_py3.11_env/Scripts/python.exe;;C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esptool_py/esptool/esesptool.py --chip esp32s3 -p COM3 -b 460800 --before=default_reset --after=hard_reset write_flash --flash_mode dio --flash_freq 80m --flash_size 8MB 0x0 bootloader/bootloader.bin 0x10000 GPIO_Example.bin 0x8000 partition_table/partition-table.bin
+esptool.py v4.8.1
+Serial port COM3
+Connecting...
+Chip is ESP32-S3 (QFN56) (revision v0.1)
+Features: WiFi, BLE, Embedded Flash 8MB (GD)
+Crystal is 40MHz
+MAC: dc:54:75:ca:f1:fc
+Uploading stub...
+Running stub...
+Stub running...
+Changing baud rate to 460800
+Changed.
+Configuring flash size...
+Flash will be erased from 0x00000000 to 0x00005fff...
+Flash will be erased from 0x00010000 to 0x00099fff...
+Flash will be erased from 0x00008000 to 0x00008fff...
+SHA digest in image updated
+Compressed 21088 bytes to 13052...
+Writing at 0x00000000... (100 %)
+Wrote 21088 bytes (13052 compressed) at 0x00000000 in 0.3 seconds (effective 554.8 kbit/s)...
+Hash of data verified.
+Compressed 565072 bytes to 336508...
+Writing at 0x00010000... (4 %)
+Writing at 0x0001c7bb... (9 %)
+Writing at 0x00022983... (14 %)
+Writing at 0x00028250... (19 %)
+Writing at 0x0003165e... (23 %)
+Writing at 0x00037805... (28 %)
+Writing at 0x0003dd65... (33 %)
+Writing at 0x0004401c... (38 %)
+Writing at 0x00049f1c... (42 %)
+Writing at 0x0005032b... (47 %)
+Writing at 0x000560f1... (52 %)
+Writing at 0x0005c859... (57 %)
+Writing at 0x000626e2... (61 %)
+Writing at 0x00067f95... (66 %)
+Writing at 0x0006d7d1... (71 %)
+Writing at 0x00073157... (76 %)
+Writing at 0x0007bd00... (80 %)
+Writing at 0x000849b2... (85 %)
+Writing at 0x0008a80a... (90 %)
+Writing at 0x00090128... (95 %)
+Writing at 0x0009689d... (100 %)
+Wrote 565072 bytes (336508 compressed) at 0x00010000 in 3.8 seconds (effective 1201.8 kbit/s)...
+Hash of data verified.
+Compressed 3072 bytes to 105...
+Writing at 0x00008000... (100 %)
+Wrote 3072 bytes (105 compressed) at 0x00008000 in 0.0 seconds (effective 639.6 kbit/s)...
+Hash of data verified.
+
+Leaving...
+Hard resetting via RTS pin...
+ptool.py;--chip;esp32s3 -D SERIAL_TOOL_ARGS=--before=default_reset;--after=hard_reset;write_flash;@flash_args -D WORKING_DIRECTORY=C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build -P C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esptool_py/run_serial_tool.cmake"
