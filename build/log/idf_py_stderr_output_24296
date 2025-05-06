@@ -1,0 +1,16 @@
+CMake Error at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/tools/cmake/component.cmake:311 (foreach):
+  Syntax error in cmake code at
+
+    C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/tools/cmake/component.cmake:311
+
+  when parsing string
+
+    C:\Users\lanaw\esp\frameworks\esp-idf-v5.3.1/components/bt/host/nimble/esp-hci/include;C:\Users\lanaw\esp\frameworks\esp-idf-v5.3.1/components/bt/host/nimble/nimble/transport/include;C:\Users\lanaw\esp\frameworks\esp-idf-v5.3.1/components/bt/host/nimble/nimble/port/include;C:\Users\lanaw\esp\frameworks\esp-idf-v5.3.1/components/bt/host/nimble/port/include;C:\Users\lanaw\esp\frameworks\esp-idf-v5.3.1/components/bt/host/nimble/nimble/nimble/include;C:\Users\lanaw\esp\frameworks\esp-idf-v5.3.1/components/bt/host/nimble/nimble/nimble/host/include;C:\Users\lanaw\esp\frameworks\esp-idf-v5.3.1/components/bt/host/nimble/nimble/nimble/host/services/gap/include;C:\Users\lanaw\esp\frameworks\esp-idf-v5.3.1/components/bt/host/nimble/nimble/nimble/host/services/gatt/include;C:\Users\lanaw\esp\frameworks\esp-idf-v5.3.1/components/bt/port/include;C:\Users\lanaw\esp\frameworks\esp-idf-v5.3.1/components/freertos/include
+
+  Invalid character escape '\U'.
+Call Stack (most recent call first):
+  C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/tools/cmake/component.cmake:483 (__component_add_include_dirs)
+  components/bluetooth/CMakeLists.txt:1 (idf_component_register)
+
+
+ninja: error: rebuilding 'build.ninja': subcommand failed

@@ -35,7 +35,7 @@ CMAKE_ASM_COMPILER_AR:FILEPATH=C:/Users/lanaw/esp/tools/xtensa-esp-elf/esp-13.2.
 CMAKE_ASM_COMPILER_RANLIB:FILEPATH=C:/Users/lanaw/esp/tools/xtensa-esp-elf/esp-13.2.0_20240530/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc-ranlib.exe
 
 //ASM Compiler Base Flags
-CMAKE_ASM_FLAGS:STRING=-mlongcalls
+CMAKE_ASM_FLAGS:STRING='-mlongcalls '
 
 //Flags used by the ASM compiler during DEBUG builds.
 CMAKE_ASM_FLAGS_DEBUG:STRING=-g
@@ -364,15 +364,6 @@ PYTHON:UNINITIALIZED=C:\Users\lanaw\esp\python_env\idf5.3_py3.11_env\Scripts\pyt
 //No help, variable specified on the command line.
 PYTHON_DEPS_CHECKED:UNINITIALIZED=1
 
-//Value Computed by CMake
-Project_BINARY_DIR:STATIC=C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build
-
-//Value Computed by CMake
-Project_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-Project_SOURCE_DIR:STATIC=C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify
-
 //Allow unsafe builds. These builds ARE NOT SECURE.
 UNSAFE_BUILD:BOOL=OFF
 
@@ -554,7 +545,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=118
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=120
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

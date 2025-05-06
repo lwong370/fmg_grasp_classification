@@ -1,0 +1,56 @@
+[0;33m--- Warning: GDB cannot open serial ports accessed as COMx[0m
+[0;33m--- Using \\.\COM3 instead...[0m
+[0;33m--- esp-idf-monitor 1.6.2 on \\.\COM3 115200[0m
+[0;33m--- Quit: Ctrl+] | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H[0m
+[0;33m--- 0x40048c26: uart_tx_flush in ROM
+[0m
+[0;33m--- 0x40375b3a: panic_abort at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/panic.c:463
+--- 0x4037fc59: esp_system_abort at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/port/esp_system_chip.c:92
+--- 0x40386a49: __assert_func at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/newlib/assert.c:80
+--- 0x4038537a: tlsf_free at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/heap/tlsf/tlsf.c:1201 (discriminator 1)
+--- 0x40385200: multi_heap_free_impl at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/heap/multi_heap.c:235
+--- 0x403763ca: heap_caps_free at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/heap/heap_caps_base.c:70
+--- 0x40386a79: free at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/newlib/heap.c:39
+--- 0x4203c0f9: operator delete(void*) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp-elf/src/gcc/libstdc++-v3/libsupc++/del_op.cc:49
+--- 0x4203bae5: operator delete(void*, unsigned int) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp-elf/src/gcc/libstdc++-v3/libsupc++/del_ops.cc:33
+--- 0x4200a588: std::__new_allocator<float>::deallocate(float*, unsigned int) at C:/Users/lanaw/esp/tools/xtensa-esp-elf/esp-13.2.0_20240530/xtensa-esp-elf/xtensa-esp-elf/include/c++/13.2.0/bits/new_allocator.h:168
+--- 0x4200a5a5: std::allocator_traits<std::allocator<float> >::deallocate(std::allocator<float>&, float*, unsigned int) at C:/Users/lanaw/esp/tools/xtensa-esp-elf/esp-13.2.0_20240530/xtensa-esp-elf/xtensa-esp-elf/include/c++/13.2.0/bits/alloc_traits.h:516
+---  (inlined by) std::_Vector_base<float, std::allocator<float> >::_M_deallocate(float*, unsigned int) at C:/Users/lanaw/esp/tools/xtensa-esp-elf/esp-13.2.0_20240530/xtensa-esp-elf/xtensa-esp-elf/include/c++/13.2.0/bits/stl_vector.h:387
+---  (inlined by) std::_Vector_base<float, std::allocator<float> >::~_Vector_base() at C:/Users/lanaw/esp/tools/xtensa-esp-elf/esp-13.2.0_20240530/xtensa-esp-elf/xtensa-esp-elf/include/c++/13.2.0/bits/stl_vector.h:366
+--- 0x4200a5b1: std::vector<float, std::allocator<float> >::~vector() at C:/Users/lanaw/esp/tools/xtensa-esp-elf/esp-13.2.0_20240530/xtensa-esp-elf/xtensa-esp-elf/include/c++/13.2.0/bits/stl_vector.h:735
+--- 0x4200ac47: predict_task(void*) at C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/main/GPIO_Example.cpp:172
+--- 0x40380771: vPortTaskWrapper at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m--- 0x42041604: txdc_cal_v70 at ??:?
+[0m
+[0;33m--- 0x40375b3a: panic_abort at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/panic.c:463
+--- 0x4037fc59: esp_system_abort at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/port/esp_system_chip.c:92
+--- 0x40386a49: __assert_func at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/newlib/assert.c:80
+--- 0x4038537a: tlsf_free at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/heap/tlsf/tlsf.c:1201 (discriminator 1)
+--- 0x40385200: multi_heap_free_impl at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/heap/multi_heap.c:235
+--- 0x403763ca: heap_caps_free at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/heap/heap_caps_base.c:70
+--- 0x40386a79: free at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/newlib/heap.c:39
+--- 0x4203c0f9: operator delete(void*) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp-elf/src/gcc/libstdc++-v3/libsupc++/del_op.cc:49
+--- 0x4203bae5: operator delete(void*, unsigned int) at /builds/idf/crosstool-NG/.build/HOST-x86_64-w64-mingw32/xtensa-esp-elf/src/gcc/libstdc++-v3/libsupc++/del_ops.cc:33
+--- 0x4200a588: std::__new_allocator<float>::deallocate(float*, unsigned int) at C:/Users/lanaw/esp/tools/xtensa-esp-elf/esp-13.2.0_20240530/xtensa-esp-elf/xtensa-esp-elf/include/c++/13.2.0/bits/new_allocator.h:168
+--- 0x4200a5a5: std::allocator_traits<std::allocator<float> >::deallocate(std::allocator<float>&, float*, unsigned int) at C:/Users/lanaw/esp/tools/xtensa-esp-elf/esp-13.2.0_20240530/xtensa-esp-elf/xtensa-esp-elf/include/c++/13.2.0/bits/alloc_traits.h:516
+---  (inlined by) std::_Vector_base<float, std::allocator<float> >::_M_deallocate(float*, unsigned int) at C:/Users/lanaw/esp/tools/xtensa-esp-elf/esp-13.2.0_20240530/xtensa-esp-elf/xtensa-esp-elf/include/c++/13.2.0/bits/stl_vector.h:387
+---  (inlined by) std::_Vector_base<float, std::allocator<float> >::~_Vector_base() at C:/Users/lanaw/esp/tools/xtensa-esp-elf/esp-13.2.0_20240530/xtensa-esp-elf/xtensa-esp-elf/include/c++/13.2.0/bits/stl_vector.h:366
+--- 0x4200a5b1: std::vector<float, std::allocator<float> >::~vector() at C:/Users/lanaw/esp/tools/xtensa-esp-elf/esp-13.2.0_20240530/xtensa-esp-elf/xtensa-esp-elf/include/c++/13.2.0/bits/stl_vector.h:735
+--- 0x4200ac47: predict_task(void*) at C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/main/GPIO_Example.cpp:172
+--- 0x40380771: vPortTaskWrapper at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m--- 0x4203e77b: pwdet_tone_start at ??:?
+[0m
+[0;33m--- To exit from IDF monitor please use "Ctrl+]". Alternatively, you can use Ctrl+T Ctrl+X to exit.[0m
+[0;33m--- 0x4203e77b: pwdet_tone_start at ??:?
+[0m
+[0;33m--- To exit from IDF monitor please use "Ctrl+]". Alternatively, you can use Ctrl+T Ctrl+X to exit.[0m
+[0m
+Traceback (most recent call last):
+  File "C:\Users\lanaw\esp\frameworks\esp-idf-v5.3.1\tools/idf_monitor.py", line 11, in <module>
+  File "subprocess.py", line 550, in run
+  File "subprocess.py", line 1199, in communicate
+  File "subprocess.py", line 1262, in wait
+  File "subprocess.py", line 1543, in _wait
+KeyboardInterrupt

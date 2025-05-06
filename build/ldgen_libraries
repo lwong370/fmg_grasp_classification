@@ -82,6 +82,7 @@ C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/es
 C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/touch_element/libtouch_element.a
 C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/usb/libusb.a
 C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/wifi_provisioning/libwifi_provisioning.a
-C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/main/libmain.a
-C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/feature_extraction/libfeature_extraction.a
 C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/predictor/libpredictor.a
+C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/feature_extraction/libfeature_extraction.a
+C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/bluetooth/libbluetooth.a
+C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/main/libmain.a

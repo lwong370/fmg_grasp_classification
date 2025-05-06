@@ -9,32 +9,24 @@
 #include <sstream>
 #include <map>
 #include <string>
+#include <array>
 #include "../liblinear/linear.h"
 #include "esp_log.h"
-#include "esp_spiffs.h"
-// #include "driver/adc.h"  
+// #include "esp_spiffs.h"
 #include "esp_adc/adc_oneshot.h"
 // #include "../src/fsr_reader.h"
+// #include "driver/adc.h"  
 #include "predict.h"
-#include "feature_extraction.h"
-// #include "bluetooth_ble.h"
+#include "../components/constants/types.h"
+#include "../components/feature_extraction/feature_extraction.h"
+#include "../components/constants/config.h"
+extern "C" {
+    #include "nimble_ble.h"
+}
 
 #define TAG "MY_APP"
 
-// FSR & Sampling Parameters
-#define NUM_FSRS 8
-#define SAMPLE_RATE_MS 10           // Sample every 10ms
-#define WINDOW_DURATION_MS 200
-#define STEP_DURATION_MS 50
-#define WINDOW_SIZE (WINDOW_DURATION_MS / SAMPLE_RATE_MS)  // 20 samples
-#define STEP_SIZE (STEP_DURATION_MS / SAMPLE_RATE_MS)      // 5 samples
-#define NUM_FEATURES 8
-#define FEATURE_QUEUE_LENGTH 5
-
-using MAVFeature = std::vector<float>;
-using Window = std::vector<std::vector<int>>;
 QueueHandle_t feature_queue;
-constexpr int NUM_CHANNELS = 8;
 
 const adc_channel_t fsr_pins[NUM_FSRS] = {
     ADC_CHANNEL_0, 
@@ -141,7 +133,7 @@ void read_fsr_task(void *pvParameter) {
             
             // Extract MAV features from window and send to prediction queue
             MAVFeature features = extract_mav_feature_from_window(window);
-            xQueueSend(feature_queue, &features, 0);
+            xQueueSend(feature_queue, &features, portMAX_DELAY);
         }
         vTaskDelayUntil(&last_wake_time, pdMS_TO_TICKS(SAMPLE_RATE_MS));
     }
@@ -183,6 +175,6 @@ extern "C" void app_main(void) {
    // Grasp Prediction
    xTaskCreate(&predict_task, "predict_task", 4096, NULL, 5, NULL);
 
-    // ble_init();
+    ble_init();
     // xTaskCreate(ble_notify_task, "fmg_notify", 4096, NULL, 5, NULL);
 }

@@ -1,0 +1,282 @@
+[0;32mI (228) boot: Disabling RNG early entropy source...[0m
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x15 (USB_UART_CHIP_RESET),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40048c26
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x178c
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xcb8
+load:0x403cb700,len:0x2db0
+entry 0x403c8914
+[0;32mI (26) boot: ESP-IDF v5.3.1-dirty 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time May  5 2025 14:20:52[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (30) boot: chip revision: v0.1[0m
+[0;32mI (34) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (39) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (44) boot.esp32s3: SPI Flash Size : 8MB[0m
+[0;32mI (48) boot: Enabling RNG early entropy source...[0m
+[0;32mI (54) boot: Partition Table:[0m
+[0;32mI (57) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (65) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (72) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (79) boot:  2 factory          factory app      00 00 00010000 00177000[0m
+[0;32mI (87) boot: End of partition table[0m
+[0;32mI (91) esp_image: segment 0: paddr=00010020 vaddr=3c060020 size=19fc4h (106436) map[0m
+[0;32mI (119) esp_image: segment 1: paddr=00029fec vaddr=3fc98b00 size=042f4h ( 17140) load[0m
+[0;32mI (123) esp_image: segment 2: paddr=0002e2e8 vaddr=40374000 size=01d30h (  7472) load[0m
+[0;32mI (126) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=56c4ch (355404) map[0m
+[0;32mI (197) esp_image: segment 4: paddr=00086c74 vaddr=40375d30 size=12ce8h ( 77032) load[0m
+[0;32mI (214) esp_image: segment 5: paddr=00099964 vaddr=600fe100 size=00004h (     4) load[0m
+[0;32mI (223) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (223) boot: Disabling RNG early entropy source...[0m
+[0;32mI (235) cpu_start: Multicore app[0m
+[0;32mI (244) cpu_start: Pro cpu start user code[0m
+[0;32mI (244) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (244) app_init: Application information:[0m
+[0;32mI (247) app_init: Project name:     GPIO_Example[0m
+[0;32mI (252) app_init: App version:      1.0. 1[0m
+[0;32mI (257) app_init: Compile time:     May  5 2025 14:22:33[0m
+[0;32mI (263) app_init: ELF file SHA256:  a599c60b8...[0m
+[0;32mI (268) app_init: ESP-IDF:          v5.3.1-dirty[0m
+[0;32mI (274) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (278) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (283) efuse_init: Chip rev:         v0.1[0m
+[0;32mI (288) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (296) heap_init: At 3FC9F160 len 0004A5B0 (297 KiB): RAM[0m
+[0;32mI (302) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (308) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (314) heap_init: At 600FE104 len 00001EE4 (7 KiB): RTCRAM[0m
+[0;32mI (321) spi_flash: detected chip: gd[0m
+[0;32mI (324) spi_flash: flash io: dio[0m
+[0;32mI (329) sleep: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (335) sleep: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (342) coexist: coex firmware version: 4482466[0m
+[0;32mI (348) coexist: coexist rom version e7ae62f[0m
+[0;32mI (353) main_task: Started on CPU0[0m
+[0;32mI (363) main_task: Calling app_main()[0m
+[0;32mI (373) BLE_INIT: BT controller compile version [aa16a46][0m
+[0;32mI (373) BLE_INIT: Bluetooth MAC: dc:54:75:ca:f1:fe[0m
+[0;32mI (373) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10[0m
+[0;32mI (403) MY_APP: Prediction: 8 (WF)[0m
+
+assert failed: tlsf_free tlsf.c:1201 (!block_is_free(block) && "block already marked as free")
+
+
+Backtrace: 0x40375b3a:0x3fca62b0 0x4037fc59:0x3fca62d0 0x40386a49:0x3fca62f0 0x4038537a:0x3fca6410 0x40385200:0x3fca6430 0x403763ca:0x3fca6450 0x40386a79:0x3fca6470 0x4203c0f9:0x3fca6490 0x4203bae5:0x3fca64b0 0x4200a588:0x3fca64d0 0x4200a5a5:0x3fca64f0 0x4200a5b1:0x3fca6510 0x4200ac47:0x3fca6530 0x40380771:0x3fca6610
+
+
+
+
+ELF file SHA256: a599c60b8
+
+Rebooting...
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0xc (RTC_SW_CPU_RST),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x42041604
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x178c
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xcb8
+load:0x403cb700,len:0x2db0
+entry 0x403c8914
+[0;32mI (26) boot: ESP-IDF v5.3.1-dirty 2nd stage bootloader[0m
+[0;32mI (26) boot: compile time May  5 2025 14:20:52[0m
+[0;32mI (26) boot: Multicore bootloader[0m
+[0;32mI (30) boot: chip revision: v0.1[0m
+[0;32mI (34) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (38) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (43) boot.esp32s3: SPI Flash Size : 8MB[0m
+[0;32mI (48) boot: Enabling RNG early entropy source...[0m
+[0;32mI (53) boot: Partition Table:[0m
+[0;32mI (57) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (64) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (72) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (79) boot:  2 factory          factory app      00 00 00010000 00177000[0m
+[0;32mI (86) boot: End of partition table[0m
+[0;32mI (91) esp_image: segment 0: paddr=00010020 vaddr=3c060020 size=19fc4h (106436) map[0m
+[0;32mI (118) esp_image: segment 1: paddr=00029fec vaddr=3fc98b00 size=042f4h ( 17140) load[0m
+[0;32mI (122) esp_image: segment 2: paddr=0002e2e8 vaddr=40374000 size=01d30h (  7472) load[0m
+[0;32mI (126) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=56c4ch (355404) map[0m
+[0;32mI (197) esp_image: segment 4: paddr=00086c74 vaddr=40375d30 size=12ce8h ( 77032) load[0m
+[0;32mI (214) esp_image: segment 5: paddr=00099964 vaddr=600fe100 size=00004h (     4) load[0m
+[0;32mI (223) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (223) boot: Disabling RNG early entropy source...[0m
+[0;32mI (235) cpu_start: Multicore app[0m
+[0;32mI (244) cpu_start: Pro cpu start user code[0m
+[0;32mI (244) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (244) app_init: Application information:[0m
+[0;32mI (247) app_init: Project name:     GPIO_Example[0m
+[0;32mI (252) app_init: App version:      1.0. 1[0m
+[0;32mI (257) app_init: Compile time:     May  5 2025 14:22:33[0m
+[0;32mI (263) app_init: ELF file SHA256:  a599c60b8...[0m
+[0;32mI (268) app_init: ESP-IDF:          v5.3.1-dirty[0m
+[0;32mI (274) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (279) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (283) efuse_init: Chip rev:         v0.1[0m
+[0;32mI (288) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (296) heap_init: At 3FC9F160 len 0004A5B0 (297 KiB): RAM[0m
+[0;32mI (302) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (308) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (314) heap_init: At 600FE104 len 00001EE4 (7 KiB): RTCRAM[0m
+[0;32mI (321) spi_flash: detected chip: gd[0m
+[0;32mI (324) spi_flash: flash io: dio[0m
+[0;32mI (329) sleep: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (335) sleep: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (342) coexist: coex firmware version: 4482466[0m
+[0;32mI (348) coexist: coexist rom version e7ae62f[0m
+[0;32mI (353) main_task: Started on CPU0[0m
+[0;32mI (363) main_task: Calling app_main()[0m
+[0;32mI (373) BLE_INIT: BT controller compile version [aa16a46][0m
+[0;32mI (373) BLE_INIT: Bluetooth MAC: dc:54:75:ca:f1:fe[0m
+[0;32mI (373) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10[0m
+[0;32mI (403) MY_APP: Prediction: 8 (WF)[0m
+
+assert failed: tlsf_free tlsf.c:1201 (!block_is_free(block) && "block already marked as free")
+
+
+Backtrace: 0x40375b3a:0x3fca62b0 0x4037fc59:0x3fca62d0 0x40386a49:0x3fca62f0 0x4038537a:0x3fca6410 0x40385200:0x3fca6430 0x403763ca:0x3fca6450 0x40386a79:0x3fca6470 0x4203c0f9:0x3fca6490 0x4203bae5:0x3fca64b0 0x4200a588:0x3fca64d0 0x4200a5a5:0x3fca64f0 0x4200a5b1:0x3fca6510 0x4200ac47:0x3fca6530 0x40380771:0x3fca6610
+
+
+
+
+ELF file SHA256: a599c60b8
+
+Rebooting...
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0xc (RTC_SW_CPU_RST),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x4203e77b
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x178c
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xcb8
+load:0x403cb700,len:0x2db0
+entry 0x403c8914
+[0;32mI (26) boot: ESP-IDF v5.3.1-dirty 2nd stage bootloader[0m
+[0;32mI (26) boot: compile time May  5 2025 14:20:52[0m
+[0;32mI (26) boot: Multicore bootloader[0m
+[0;32mI (30) boot: chip revision: v0.1[0m
+[0;32mI (34) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (38) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (43) boot.esp32s3: SPI Flash Size : 8MB[0m
+[0;32mI (48) boot: Enabling RNG early entropy source...[0m
+[0;32mI (53) boot: Partition Table:[0m
+[0;32mI (57) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (64) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (72) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (79) boot:  2 factory          factory app      00 00 00010000 00177000[0m
+[0;32mI (87) boot: End of partition table[0m
+[0;32mI (91) esp_image: segment 0: paddr=00010020 vaddr=3c060020 size=19fc4h (106436) map[0m
+[0;32mI (118) esp_image: segment 1: paddr=00029fec vaddr=3fc98b00 size=042f4h ( 17140) load[0m
+[0;32mI (122) esp_image: segment 2: paddr=0002e2e8 vaddr=40374000 size=01d30h (  7472) load[0m
+[0;32mI (126) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=56c4ch (355404) map[0m
+[0;32mI (197) esp_image: segment 4: paddr=00086c74 vaddr=40375d30 size=12ce8h ( 77032) load[0m
+[0;32mI (214) esp_image: segment 5: paddr=00099964 vaddr=600fe100 size=00004h (     4) load[0m
+[0;32mI (223) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (223) boot: Disabling RNG early entropy source...[0m
+[0;32mI (235) cpu_start: Multicore app[0m
+[0;32mI (244) cpu_start: Pro cpu start user code[0m
+[0;32mI (244) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (244) app_init: Application information:[0m
+[0;32mI (247) app_init: Project name:     GPIO_Example[0m
+[0;32mI (252) app_init: App version:      1.0. 1[0m
+[0;32mI (257) app_init: Compile time:     May  5 2025 14:22:33[0m
+[0;32mI (263) app_init: ELF file SHA256:  a599c60b8...[0m
+[0;32mI (268) app_init: ESP-IDF:          v5.3.1-dirty[0m
+[0;32mI (274) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (278) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (283) efuse_init: Chip rev:         v0.1[0m
+[0;32mI (288) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (295) heap_init: At 3FC9F160 len 0004A5B0 (297 KiB): RAM[0m
+[0;32mI (302) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (308) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (314) heap_init: At 600FE104 len 00001EE4 (7 KiB): RTCRAM[0m
+[0;32mI (321) spi_flash: detected chip: gd[0m
+[0;32mI (324) spi_flash: flash io: dio[0m
+[0;32mI (329) sleep: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (335) sleep: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (342) coexist: coex firmware version: 4482466[0m
+[0;32mI (348) coexist: coexist rom version e7ae62f[0m
+[0;32mI (353) main_task: Started on CPU0[0m
+[0;32mI (363) main_task: Calling app_main()[0m
+[0;32mI (373) BLE_INIT: BT controller compile version [aa16a46][0m
+[0;32mI (373) BLE_INIT: Bluetooth MAC: dc:54:75:ca:f1:fe[0m
+[0;32mI (373) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10[0m
+[0;32mI (403) MY_APP: Prediction: 8 (WF)[0m
+
+assert failed: tlsf_free tlsf.c:1201 (!block_is_free(block) && "block already marked as free")
+
+
+Backtrace: 0x40375b3a:0x3fca62b0 0x4037fc59:0x3fca62d0 0x40386a49:0x3fca62f0 0x4038537a:0x3fca6410 0x40385200:0x3fca6430 0x403763ca:0x3fca6450 0x40386a79:0x3fca6470 0x4203c0f9:0x3fca6490 0x4203bae5:0x3fca64b0 0x4200a588:0x3fca64d0 0x4200a5a5:0x3fca64f0 0x4200a5b1:0x3fca6510 0x4200ac47:0x3fca6530 0x40380771:0x3fca6610
+Build:Mar 27 2021
+rst:0xc (RTC_SW_CPU_RST),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x4203e77b
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x178c
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xcb8
+load:0x403cb700,len:0x2db0
+entry 0x403c8914
+[0;32mI (26) boot: ESP-IDF v5.3.1-dirty 2nd stage bootloader[0m
+[0;32mI (26) boot: compile time May  5 2025 14:20:52[0m
+[0;32mI (26) boot: Multicore bootloader[0m
+[0;32mI (30) boot: chip revision: v0.1[0m
+[0;32mI (34) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (38) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (43) boot.esp32s3: SPI Flash Size : 8MB[0m
+[0;32mI (48) boot: Enabling RNG early entropy source...[0m
+[0;32mI (53) boot: Partition Table:[0m
+[0;32mI (57) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (64) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (72) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (79) boot:  2 factory          factory app      00 00 00010000 00177000[0m
+[0;32mI (87) boot: End of partition table[0m
+[0;32mI (91) esp_image: segment 0: paddr=00010020 vaddr=3c060020 size=19fc4h (106436) map[0m
+[0;32mI (118) esp_image: segment 1: paddr=00029fec vaddr=3fc98b00 size=042f4h ( 17140) load[0m
+[0;32mI (122) esp_image: segment 2: paddr=0002e2e8 vaddr=40374000 size=01d30h (  7472) load[0m
+[0;32mI (126) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=56c4ch (355404) map[0m
+[0;32mI (197) esp_image: segment 4: paddr=00086c74 vaddr=40375d30 size=12ce8h ( 77032) load[0m
+[0;32mI (214) esp_image: segment 5: paddr=00099964 vaddr=600fe100 size=00004h (     4) load[0m
+[0;32mI (223) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (223) boot: Disabling RNG early entropy source...[0m
+[0;32mI (235) cpu_start: Multicore app[0m
+[0;32mI (244) cpu_start: Pro cpu start user code[0m
+[0;32mI (244) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (244) app_init: Application information:[0m
+[0;32mI (247) app_init: Project name:     GPIO_Example[0m
+[0;32mI (252) app_init: App version:      1.0. 1[0m
+[0;32mI (257) app_init: Compile time:     May  5 2025 14:22:33[0m
+[0;32mI (263) app_init: ELF file SHA256:  a599c60b8...[0m
+[0;32mI (268) app_init: ESP-IDF:          v5.3.1-dirty[0m
+[0;32mI (274) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (278) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (283) efuse_init: Chip rev:         v0.1[0m
+[0;32mI (288) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (295) heap_init: At 3FC9F160 len 0004A5B0 (297 KiB): RAM[0m
+[0;32mI (302) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (308) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (314) heap_init: At 600FE104 len 00001EE4 (7 KiB): RTCRAM[0m
+[0;32mI (321) spi_flash: detected chip: gd[0m
+[0;32mI (324) spi_flash: flash io: dio[0m
+[0;32mI (329) sleep: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (335) sleep: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (342) coexist: coex firmware version: 4482466[0m
+[0;32mI (348) coexist: coexist rom version e7ae62f[0m
+[0;32mI (353) main_task: Started on CPU0[0m
+[0;32mI (363) main_task: Calling app_main()[0m
+[0;32mI (373) BLE_INIT: BT controller compile version [aa16a46][0m
+[0;32mI (373) BLE_INIT: Bluetooth MAC: dc:54:75:ca:f1:fe[0m
+[0;32mI (373) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10[0m
+[0;32mI (403) MY_APP: Prediction: 8 (WF)[0m
+
+assert failed: tlsf_free tlsf.c:1201 (!block_is_free(block) && "block already marked as free")
+
+
+Backtrace: 0x40375b3a:0x3fca62b0 0x4037fc59:0x3fca62d0 0x40386a49:0x3fca62f0 0x4038537a:0x3fca6410 0x40385200:0x3fca6430 0x403763ca:0x3fca6450 0x40386a79:0x3fca6470 0x4203c0f9:0x3fca6490 0x4203bae5:0x3fca64b0 0x4200a588:0x3fca64d0 0x4200a5a5:0x3fca64f0 0x4200a5b1:0x3fca6510 0x4200ac47:0x3fca6530 0x40380771:0x3fca6610
