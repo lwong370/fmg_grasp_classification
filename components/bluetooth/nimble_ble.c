@@ -15,23 +15,25 @@
 #include "nimble_ble.h"
 #include "services/gap/ble_svc_gap.h"
 #include "esp_bt.h"
+#include "../components/constants/config.h"
 
 char *TAG = "BLE-Server";
 static const char *DEVICE_NAME = "PoohBand";
 
 uint8_t ble_addr_type;
+static uint16_t conn_handle = BLE_HS_CONN_HANDLE_NONE;
+static uint16_t sensor_data_handle;
+
 void ble_app_advertise(void);
 
 // Write data to ESP32 defined as server
-static int device_write(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt, void *arg)
-{
+static int device_write(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt, void *arg) {
     printf("Data from the client: %.*s\n", ctxt->om->om_len, ctxt->om->om_data);
     return 0;
 }
 
 // Read data from ESP32 defined as server
-static int device_read(uint16_t con_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt, void *arg)
-{
+static int device_read(uint16_t con_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt, void *arg) {
     os_mbuf_append(ctxt->om, "Data from the server", strlen("Data from the server"));
     return 0;
 }
@@ -52,8 +54,7 @@ static const struct ble_gatt_svc_def gatt_svcs[] = {
     {0}};
 
 // BLE event handling
-static int ble_gap_event(struct ble_gap_event *event, void *arg)
-{
+static int ble_gap_event(struct ble_gap_event *event, void *arg) {
     switch (event->type)
     {
     // Advertise if connected
@@ -76,8 +77,7 @@ static int ble_gap_event(struct ble_gap_event *event, void *arg)
 }
 
 // Define the BLE connection
-void ble_app_advertise(void)
-{
+void ble_app_advertise(void) {
     struct ble_hs_adv_fields fields;
     memset(&fields, 0, sizeof(fields));
     fields.name = (uint8_t *)"PoohBand";
@@ -103,8 +103,7 @@ void ble_app_advertise(void)
 }
 
 // The application
-void ble_app_on_sync(void)
-{
+void ble_app_on_sync(void) {
     // Get a valid BLE address type
     int rc = ble_hs_id_infer_auto(0, &ble_addr_type);
     if (rc != 0) {
@@ -123,8 +122,7 @@ void ble_app_on_sync(void)
 }
 
 // The infinite task
-void host_task(void *param)
-{
+void host_task(void *param) {
     nimble_port_run(); // This function will return only when nimble_port_stop() is executed
 }
 
@@ -145,8 +143,46 @@ void host_task(void *param)
 //     nimble_port_freertos_init(host_task);      // 6 - Run the thread
 // }
 
-void ble_init()
-{
+void ble_notify_task(void *param) {
+    float fsr_data[NUM_FSRS] = {2};
+
+    while(1)
+    {
+        if (conn_handle != BLE_HS_CONN_HANDLE_NONE)
+        {
+            
+            // Create mbuf to hold data
+            struct os_mbuf *om = ble_hs_mbuf_from_flat(fsr_data, sizeof(fsr_data));
+            
+            if (om != NULL)
+            {
+                int rc = ble_gattc_notify_custom(conn_handle, sensor_data_handle, om);
+                if (rc == 0)
+                {
+                    ESP_LOGI(TAG, "Notification sent: [%.1f", 
+                        fsr_data[0]);
+                }
+                else
+                {
+                    ESP_LOGE(TAG, "Error sending notification: %d", rc);
+                }
+            }
+            else
+            {
+                ESP_LOGE(TAG, "Failed to allocate mbuf");
+            }
+        }
+        else
+        {
+            ESP_LOGW(TAG, "No active connection, waiting...");
+        }
+        
+        vTaskDelay(pdMS_TO_TICKS(100));  // Send every 100ms (adjust as needed)
+    }
+}
+
+
+void ble_init() {
     esp_err_t ret;
 
     // Initialize NVS

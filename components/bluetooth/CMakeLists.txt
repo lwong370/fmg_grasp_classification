@@ -11,5 +11,5 @@ idf_component_register(
         "C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/nimble/include"
         "C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/nimble/host/services/gap/include"
         "C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/nimble/host/services/gatt/include"
-    REQUIRES nvs_flash bt esp_timer driver esp_hw_support esp_event
+    REQUIRES nvs_flash bt esp_timer driver esp_hw_support esp_event main
 )

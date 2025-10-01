@@ -1,0 +1,107 @@
+[0;33m--- Warning: GDB cannot open serial ports accessed as COMx[0m
+[0;33m--- Using \\.\COM3 instead...[0m
+[0;33m--- esp-idf-monitor 1.6.2 on \\.\COM3 115200[0m
+[0;33m--- Quit: Ctrl+] | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H[0m
+[0;33m--- 0x40045ab3: ets_run_flash_bootloader in ROM
+[0m
+[0;33m--- 0x40375b3a: panic_abort at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/panic.c:463
+--- 0x4037fc59: esp_system_abort at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/port/esp_system_chip.c:92
+--- 0x40386a49: __assert_func at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/newlib/assert.c:80
+--- 0x4200baef: ble_hs_event_start_stage2 at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/nimble/host/src/ble_hs.c:582 (discriminator 1)
+--- 0x4205298f: npl_freertos_event_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/npl/freertos/src/npl_os_freertos.c:451
+--- 0x403771b6: ble_npl_event_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/npl/freertos/include/nimble/nimble_npl_os.h:185
+---  (inlined by) nimble_port_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/nimble/src/nimble_port.c:306
+--- 0x4200afaa: host_task at C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/components/bluetooth/nimble_ble.c:141
+--- 0x40380771: vPortTaskWrapper at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m--- 0x40375a74: esp_restart_noos at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/port/soc/esp32s3/system_internal.c:158
+[0m
+[0;33m--- 0x40375b3a: panic_abort at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/panic.c:463
+--- 0x4037fc59: esp_system_abort at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/port/esp_system_chip.c:92
+--- 0x40386a49: __assert_func at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/newlib/assert.c:80
+--- 0x4200baef: ble_hs_event_start_stage2 at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/nimble/host/src/ble_hs.c:582 (discriminator 1)
+--- 0x4205298f: npl_freertos_event_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/npl/freertos/src/npl_os_freertos.c:451
+--- 0x403771b6: ble_npl_event_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/npl/freertos/include/nimble/nimble_npl_os.h:185
+---  (inlined by) nimble_port_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/nimble/src/nimble_port.c:306
+--- 0x4200afaa: host_task at C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/components/bluetooth/nimble_ble.c:141
+--- 0x40380771: vPortTaskWrapper at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m--- 0x40375a74: esp_restart_noos at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/port/soc/esp32s3/system_internal.c:158
+[0m
+[0;33m--- 0x40375b3a: panic_abort at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/panic.c:463
+--- 0x4037fc59: esp_system_abort at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/port/esp_system_chip.c:92
+--- 0x40386a49: __assert_func at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/newlib/assert.c:80
+--- 0x4200baef: ble_hs_event_start_stage2 at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/nimble/host/src/ble_hs.c:582 (discriminator 1)
+--- 0x4205298f: npl_freertos_event_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/npl/freertos/src/npl_os_freertos.c:451
+--- 0x403771b6: ble_npl_event_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/npl/freertos/include/nimble/nimble_npl_os.h:185
+---  (inlined by) nimble_port_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/nimble/src/nimble_port.c:306
+--- 0x4200afaa: host_task at C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/components/bluetooth/nimble_ble.c:141
+--- 0x40380771: vPortTaskWrapper at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m--- 0x40375a74: esp_restart_noos at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/port/soc/esp32s3/system_internal.c:158
+[0m
+[0;33m--- 0x40375b3a: panic_abort at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/panic.c:463
+--- 0x4037fc59: esp_system_abort at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/port/esp_system_chip.c:92
+--- 0x40386a49: __assert_func at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/newlib/assert.c:80
+--- 0x4200baef: ble_hs_event_start_stage2 at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/nimble/host/src/ble_hs.c:582 (discriminator 1)
+--- 0x4205298f: npl_freertos_event_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/npl/freertos/src/npl_os_freertos.c:451
+--- 0x403771b6: ble_npl_event_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/npl/freertos/include/nimble/nimble_npl_os.h:185
+---  (inlined by) nimble_port_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/nimble/src/nimble_port.c:306
+--- 0x4200afaa: host_task at C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/components/bluetooth/nimble_ble.c:141
+--- 0x40380771: vPortTaskWrapper at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m--- 0x40375a74: esp_restart_noos at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/port/soc/esp32s3/system_internal.c:158
+[0m
+[0;33m--- 0x40375b3a: panic_abort at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/panic.c:463
+--- 0x4037fc59: esp_system_abort at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/port/esp_system_chip.c:92
+--- 0x40386a49: __assert_func at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/newlib/assert.c:80
+--- 0x4200baef: ble_hs_event_start_stage2 at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/nimble/host/src/ble_hs.c:582 (discriminator 1)
+--- 0x4205298f: npl_freertos_event_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/npl/freertos/src/npl_os_freertos.c:451
+--- 0x403771b6: ble_npl_event_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/npl/freertos/include/nimble/nimble_npl_os.h:185
+---  (inlined by) nimble_port_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/nimble/src/nimble_port.c:306
+--- 0x4200afaa: host_task at C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/components/bluetooth/nimble_ble.c:141
+--- 0x40380771: vPortTaskWrapper at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m--- 0x40375a74: esp_restart_noos at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/port/soc/esp32s3/system_internal.c:158
+[0m
+[0;33m--- 0x40375b3a: panic_abort at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/panic.c:463
+--- 0x4037fc59: esp_system_abort at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/port/esp_system_chip.c:92
+--- 0x40386a49: __assert_func at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/newlib/assert.c:80
+--- 0x4200baef: ble_hs_event_start_stage2 at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/nimble/host/src/ble_hs.c:582 (discriminator 1)
+--- 0x4205298f: npl_freertos_event_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/npl/freertos/src/npl_os_freertos.c:451
+--- 0x403771b6: ble_npl_event_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/npl/freertos/include/nimble/nimble_npl_os.h:185
+---  (inlined by) nimble_port_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/nimble/src/nimble_port.c:306
+--- 0x4200afaa: host_task at C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/components/bluetooth/nimble_ble.c:141
+--- 0x40380771: vPortTaskWrapper at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m--- 0x40375a74: esp_restart_noos at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/port/soc/esp32s3/system_internal.c:158
+[0m
+[0;33m--- To exit from IDF monitor please use "Ctrl+]". Alternatively, you can use Ctrl+T Ctrl+X to exit.[0m
+[0;33m--- 0x40375a74: esp_restart_noos at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/port/soc/esp32s3/system_internal.c:158
+[0m
+[0;33m--- To exit from IDF monitor please use "Ctrl+]". Alternatively, you can use Ctrl+T Ctrl+X to exit.[0m
+[0;33m--- Warning: Writing to serial is timing out. Please make sure that your application supports an interactive console and that you have picked the correct console for serial communication.[0m
+[0;33m--- 0x40375a74: esp_restart_noos at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/port/soc/esp32s3/system_internal.c:158
+[0m
+[0;33m--- 0x40375b3a: panic_abort at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/panic.c:463
+--- 0x4037fc59: esp_system_abort at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/port/esp_system_chip.c:92
+--- 0x40386a49: __assert_func at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/newlib/assert.c:80
+--- 0x4200baef: ble_hs_event_start_stage2 at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/nimble/host/src/ble_hs.c:582 (discriminator 1)
+--- 0x4205298f: npl_freertos_event_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/npl/freertos/src/npl_os_freertos.c:451
+--- 0x403771b6: ble_npl_event_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/npl/freertos/include/nimble/nimble_npl_os.h:185
+---  (inlined by) nimble_port_run at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/bt/host/nimble/nimble/porting/nimble/src/nimble_port.c:306
+--- 0x4200afaa: host_task at C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/components/bluetooth/nimble_ble.c:141
+--- 0x40380771: vPortTaskWrapper at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m--- 0x40375a74: esp_restart_noos at C:/Users/lanaw/esp/frameworks/esp-idf-v5.3.1/components/esp_system/port/soc/esp32s3/system_internal.c:158
+[0m
+[0m
+Traceback (most recent call last):
+  File "C:\Users\lanaw\esp\frameworks\esp-idf-v5.3.1\tools/idf_monitor.py", line 11, in <module>
+    sys.exit(subprocess.run([sys.executable, '-m', 'esp_idf_monitor'] + sys.argv[1:]).returncode)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "subprocess.py", line 550, in run
+  File "subprocess.py", line 1199, in communicate
+  File "subprocess.py", line 1262, in wait
+  File "subprocess.py", line 1543, in _wait
+KeyboardInterrupt

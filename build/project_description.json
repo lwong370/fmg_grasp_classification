@@ -65,7 +65,7 @@
             "dir": "C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/components/bluetooth",
             "type": "LIBRARY",
             "lib": "__idf_bluetooth",
-            "reqs": [ "nvs_flash", "bt", "esp_timer", "driver", "esp_hw_support", "esp_event" ],
+            "reqs": [ "nvs_flash", "bt", "esp_timer", "driver", "esp_hw_support", "esp_event", "main" ],
             "priv_reqs": [],
             "managed_reqs": [],
             "managed_priv_reqs": [],
@@ -1225,7 +1225,7 @@
             "managed_reqs": [],
             "managed_priv_reqs": [],
             "file": "C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/build/esp-idf/main/libmain.a",
-            "sources": [ "C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/main/GPIO_Example.cpp", "C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/liblinear/linear.cpp", "C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/components/feature_extraction/feature_extraction.cpp", "C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/components/predictor/predict.cpp", "C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/components/bluetooth/nimble_ble.c" ],
+            "sources": [ "C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/main/main_code_old.cpp", "C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/main/GPIO_Example.cpp", "C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/liblinear/linear.cpp", "C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/components/feature_extraction/feature_extraction.cpp", "C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/components/predictor/predict.cpp", "C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/components/bluetooth/nimble_ble.c" ],
             "include_dirs": [ ".", "../liblinear" ]
         },
         "mbedtls": {
@@ -2898,7 +2898,7 @@
             "prefix": "idf",
             "dir": "C:/Users/lanaw/BEAR_lab/pooh_band/learning_for_dev/esp/esp_lda_classify/components/bluetooth",
             "lib": "__idf_bluetooth",
-            "reqs": [ "nvs_flash", "bt", "esp_timer", "driver", "esp_hw_support", "esp_event" ],
+            "reqs": [ "nvs_flash", "bt", "esp_timer", "driver", "esp_hw_support", "esp_event", "main" ],
             "priv_reqs": [],
             "managed_reqs": [],
             "managed_priv_reqs": [],

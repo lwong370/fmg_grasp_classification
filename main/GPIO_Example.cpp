@@ -25,35 +25,24 @@ extern "C" {
 }
 
 #define TAG "MY_APP"
-
 QueueHandle_t feature_queue;
 
 const adc_channel_t fsr_pins[NUM_FSRS] = {
-    ADC_CHANNEL_0, 
-    ADC_CHANNEL_1, 
-    ADC_CHANNEL_2, 
-    ADC_CHANNEL_3, 
-    ADC_CHANNEL_5, 
-    ADC_CHANNEL_6, 
-    ADC_CHANNEL_7, 
-    ADC_CHANNEL_8
-};
-
-std::map<int, std::string> label_map = {
-    {0, "CR"},
-    {1, "CW"},
-    {2, "IF"},
-    {3, "IP"},
-    {4, "KP"},
-    {5, "PP"},
-    {6, "TP"},
-    {7, "WE"},
-    {8, "WF"},
-    {9, "WR"}
+    // ADC_CHANNEL_0, 
+    // ADC_CHANNEL_1, 
+    // ADC_CHANNEL_2, 
+    // ADC_CHANNEL_3, 
+    ADC_CHANNEL_5 
+    // ADC_CHANNEL_6, 
+    // ADC_CHANNEL_7, 
+    // ADC_CHANNEL_8
 };
 
 // FSR CODE
 void read_fsr_task(void *pvParameter) {
+    int log_counter = 0;
+    const int log_interval = 100;
+    
     // --- Initialize ADC handle and configuration for ADC one-shot mode ---
     adc_oneshot_unit_handle_t adc1_handle;
     adc_oneshot_unit_init_cfg_t init_config = {
@@ -87,15 +76,21 @@ void read_fsr_task(void *pvParameter) {
     // Counts number of samples since last window extraction
     int sample_counter = 0;
 
-    TickType_t last_wake_time = xTaskGetTickCount();
+    //TickType_t last_wake_time = xTaskGetTickCount();
 
     while (1) {  
         // Read a new sample from each FSR      
         for (int i = 0; i < NUM_FSRS; i++) {
+            // int i = 7;
             int raw_value;
             esp_err_t err = adc_oneshot_read(adc1_handle, fsr_pins[i], &raw_value);
             if (err == ESP_OK) {
-                // printf("FSR%d: %d\n", i, raw_value);  // Print one FSR reading per line
+                
+                // Delay logging so it's readable
+                // if (log_counter == 0) {
+                    printf("FSR%d: %d\n", i, raw_value);  // Print one FSR reading per line
+                // }
+                log_counter = (log_counter + 1) % log_interval;
 
                 // Write new sample in circular buffer
                 signal_buffer[i][buffer_index] = raw_value;
@@ -103,6 +98,8 @@ void read_fsr_task(void *pvParameter) {
                 printf("FSR%d: ADC Read Failed (%d)\n", i, err);
             }
         }
+
+        printf("-----------\n");
         
         // Update buffer index and add 1 to counter
         buffer_index = (buffer_index + 1) % WINDOW_SIZE;
@@ -131,52 +128,28 @@ void read_fsr_task(void *pvParameter) {
                 window.push_back(channel);
             }
             
-            // Extract MAV features from window and send to prediction queue
-            MAVFeature features = extract_mav_feature_from_window(window);
-            xQueueSend(feature_queue, &features, portMAX_DELAY);
+            // // Extract MAV features from window and send to prediction queue
+            // MAVFeature features = extract_mav_feature_from_window(window);
+            // xQueueSend(feature_queue, &features, portMAX_DELAY);
         }
-        vTaskDelayUntil(&last_wake_time, pdMS_TO_TICKS(SAMPLE_RATE_MS));
+        // vTaskDelayUntil(&last_wake_time, pdMS_TO_TICKS(SAMPLE_RATE_MS));
+        vTaskDelay(pdMS_TO_TICKS(500));
     }
     adc_oneshot_del_unit(adc1_handle);
     vTaskDelete(NULL);
 }
 
-void predict_task(void *pvParameter) {
-    while (1) {
-        MAVFeature received_features;
-        if (xQueueReceive(feature_queue, &received_features, portMAX_DELAY) == pdTRUE) {
-            if (received_features.size() == NUM_FEATURES) {
-                double input_vector[NUM_FEATURES];
-                double input_scaled[NUM_FEATURES];
-
-                for (int i = 0; i < NUM_FEATURES; i++)
-                    input_vector[i] = static_cast<double>(received_features[i]);
-
-                normalize(input_vector, input_scaled);  // From predict.h
-                int prediction = predict(input_scaled); // From predict.h
-
-                std::string label = label_map[prediction];
-                ESP_LOGI(TAG, "Prediction: %d (%s)", prediction, label.c_str());
-            }
-        }
-    }
-}
-
 extern "C" void app_main(void) {
     ble_init();
     
-    feature_queue = xQueueCreate(FEATURE_QUEUE_LENGTH, sizeof(MAVFeature));
-    if (feature_queue == NULL) {
-        ESP_LOGE(TAG, "Failed to create feature queue.");
-        return;
-    }
+    // feature_queue = xQueueCreate(FEATURE_QUEUE_LENGTH, sizeof(MAVFeature));
+    // if (feature_queue == NULL) {
+    //     ESP_LOGE(TAG, "Failed to create feature queue.");
+    //     return;
+    // }
 
     // FSR CODE
     xTaskCreate(&read_fsr_task, "read_fsr_task", 4096, NULL, 5, NULL);
-    
-   // Grasp Prediction
-   xTaskCreate(&predict_task, "predict_task", 4096, NULL, 5, NULL);
-
-    
-    // xTaskCreate(ble_notify_task, "fmg_notify", 4096, NULL, 5, NULL);
+        
+    xTaskCreate(&ble_notify_task, "fmg_notify", 4096, NULL, 5, NULL);
 }

@@ -1,0 +1,216 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x15 (USB_UART_CHIP_RESET),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x400490d5
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x178c
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xcb8
+load:0x403cb700,len:0x2db0
+entry 0x403c8914
+[0;32mI (26) boot: ESP-IDF v5.3.1-dirty 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time May  5 2025 14:20:52[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (30) boot: chip revision: v0.1[0m
+[0;32mI (34) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (39) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (44) boot.esp32s3: SPI Flash Size : 8MB[0m
+[0;32mI (48) boot: Enabling RNG early entropy source...[0m
+[0;32mI (54) boot: Partition Table:[0m
+[0;32mI (57) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (65) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (72) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (79) boot:  2 factory          factory app      00 00 00010000 00177000[0m
+[0;32mI (87) boot: End of partition table[0m
+[0;32mI (91) esp_image: segment 0: paddr=00010020 vaddr=3c060020 size=19f60h (106336) map[0m
+[0;32mI (119) esp_image: segment 1: paddr=00029f88 vaddr=3fc98a00 size=042f4h ( 17140) load[0m
+[0;32mI (123) esp_image: segment 2: paddr=0002e284 vaddr=40374000 size=01d94h (  7572) load[0m
+[0;32mI (126) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=566c4h (353988) map[0m
+[0;32mI (196) esp_image: segment 4: paddr=000866ec vaddr=40375d94 size=12bd8h ( 76760) load[0m
+[0;32mI (214) esp_image: segment 5: paddr=000992cc vaddr=600fe100 size=00004h (     4) load[0m
+[0;32mI (223) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (223) boot: Disabling RNG early entropy source...[0m
+[0;32mI (235) cpu_start: Multicore app[0m
+[0;32mI (244) cpu_start: Pro cpu start user code[0m
+[0;32mI (244) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (244) app_init: Application information:[0m
+[0;32mI (247) app_init: Project name:     GPIO_Example[0m
+[0;32mI (252) app_init: App version:      1.0. 1[0m
+[0;32mI (257) app_init: Compile time:     May  5 2025 14:22:33[0m
+[0;32mI (263) app_init: ELF file SHA256:  cf7a2ad93...[0m
+[0;32mI (268) app_init: ESP-IDF:          v5.3.1-dirty[0m
+[0;32mI (273) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (278) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (283) efuse_init: Chip rev:         v0.1[0m
+[0;32mI (288) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (295) heap_init: At 3FC9F050 len 0004A6C0 (297 KiB): RAM[0m
+[0;32mI (301) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (307) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (313) heap_init: At 600FE104 len 00001EE4 (7 KiB): RTCRAM[0m
+[0;32mI (321) spi_flash: detected chip: gd[0m
+[0;32mI (324) spi_flash: flash io: dio[0m
+[0;32mI (329) sleep: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (335) sleep: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (342) coexist: coex firmware version: 4482466[0m
+[0;32mI (347) coexist: coexist rom version e7ae62f[0m
+[0;32mI (353) main_task: Started on CPU0[0m
+[0;32mI (363) main_task: Calling app_main()[0m
+[0;32mI (373) BLE_INIT: BT controller compile version [aa16a46][0m
+[0;32mI (373) BLE_INIT: Bluetooth MAC: dc:54:75:ca:f1:fe[0m
+[0;32mI (373) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10[0m
+[0;32mI (423) NimBLE: GAP procedure initiated: stop advertising.
+[0m
+[0;32mI (423) NimBLE: Failed to restore IRKs from store; status=8
+[0m
+[0;32mI (423) NimBLE: GAP procedure initiated: advertise; [0m
+[0;32mI (433) NimBLE: disc_mode=2[0m
+[0;32mI (433) NimBLE:  adv_channel_map=0 own_addr_type=0 adv_filter_policy=0 adv_itvl_min=128 adv_itvl_max=256[0m
+[0;32mI (443) NimBLE: 
+[0m
+[0;32mI (453) BLE-Server: BLE initialization complete[0m
+FSR0: 757
+FSR1: 2898
+FSR2: 2739
+FSR3: 2891
+FSR4: 2451
+FSR5: 2725
+FSR6: 2829
+FSR7: 1270
+-----------
+[0;32mI (463) main_task: Returned from app_main()[0m
+FSR0: 814
+FSR1: 3023
+FSR2: 2769
+FSR3: 2991
+FSR4: 2383
+FSR5: 2933
+FSR6: 2841
+FSR7: 779
+-----------
+FSR0: 917
+FSR1: 3999
+FSR2: 3737
+FSR3: 3973
+FSR4: 2681
+FSR5: 3866
+FSR6: 3789
+FSR7: 883
+-----------
+FSR0: 791
+FSR1: 3093
+FSR2: 2806
+FSR3: 3047
+FSR4: 2394
+FSR5: 3004
+FSR6: 2821
+FSR7: 792
+-----------
+FSR0: 793
+FSR1: 3077
+FSR2: 2808
+FSR3: 3047
+FSR4: 2392
+FSR5: 3007
+FSR6: 2809
+FSR7: 805
+-----------
+FSR0: 786
+FSR1: 2994
+FSR2: 2778
+FSR3: 2971
+FSR4: 2429
+FSR5: 2942
+FSR6: 2830
+FSR7: 839
+-----------
+FSR0: 785
+FSR1: 3131
+FSR2: 2791
+FSR3: 3107
+FSR4: 2351
+FSR5: 3063
+FSR6: 2855
+FSR7: 804
+-----------
+FSR0: 843
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 3702
+FSR5: 4095
+FSR6: 4095
+FSR7: 1099
+-----------
+FSR0: 839
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 3691
+FSR5: 4095
+FSR6: 4093
+FSR7: 1115
+-----------
+FSR0: 692
+FSR1: 4095
+FSR2: 2739
+FSR3: 4095
+FSR4: 2811
+FSR5: 4095
+FSR6: 2885
+FSR7: 885
+-----------
+FSR0: 782
+FSR1: 3113
+FSR2: 2773
+FSR3: 3068
+FSR4: 2451
+FSR5: 3049
+FSR6: 2821
+FSR7: 811
+-----------
+FSR0: 937
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 3709
+FSR5: 4095
+FSR6: 4095
+FSR7: 1109
+-----------
+FSR0: 758
+FSR1: 4095
+FSR2: 3325
+FSR3: 4095
+FSR4: 3161
+FSR5: 4095
+FSR6: 3293
+FSR7: 948
+-----------
+FSR0: 775
+FSR1: 3055
+FSR2: 2743
+FSR3: 3033
+FSR4: 2349
+FSR5: 3037
+FSR6: 2803
+FSR7: 783
+-----------
+FSR0: 807
+FSR1: 2991
+FSR2: 2769
+FSR3: 2959
+FSR4: 2351
+FSR5: 2932
+FSR6: 2811
+FSR7: 789
+-----------
+FSR0: 779
+FSR1: 2951
+FSR2: 2763
+FSR3: 2933
+FSR4: 2351
+FSR5: 2887
+FSR6: 2789
+FSR7: 779
+-----------

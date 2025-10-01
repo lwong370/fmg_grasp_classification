@@ -1,0 +1,532 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x15 (USB_UART_CHIP_RESET),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40048dfc
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x178c
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xcb8
+load:0x403cb700,len:0x2db0
+entry 0x403c8914
+[0;32mI (26) boot: ESP-IDF v5.3.1-dirty 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time May  5 2025 14:20:52[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (30) boot: chip revision: v0.1[0m
+[0;32mI (34) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (39) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (44) boot.esp32s3: SPI Flash Size : 8MB[0m
+[0;32mI (48) boot: Enabling RNG early entropy source...[0m
+[0;32mI (54) boot: Partition Table:[0m
+[0;32mI (57) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (65) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (72) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (79) boot:  2 factory          factory app      00 00 00010000 00177000[0m
+[0;32mI (87) boot: End of partition table[0m
+[0;32mI (91) esp_image: segment 0: paddr=00010020 vaddr=3c060020 size=19f60h (106336) map[0m
+[0;32mI (119) esp_image: segment 1: paddr=00029f88 vaddr=3fc98a00 size=042f4h ( 17140) load[0m
+[0;32mI (123) esp_image: segment 2: paddr=0002e284 vaddr=40374000 size=01d94h (  7572) load[0m
+[0;32mI (126) esp_image: segment 3: paddr=00030020 vaddr=42000020 size=566dch (354012) map[0m
+[0;32mI (196) esp_image: segment 4: paddr=00086704 vaddr=40375d94 size=12bd8h ( 76760) load[0m
+[0;32mI (214) esp_image: segment 5: paddr=000992e4 vaddr=600fe100 size=00004h (     4) load[0m
+[0;32mI (223) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (223) boot: Disabling RNG early entropy source...[0m
+[0;32mI (235) cpu_start: Multicore app[0m
+[0;32mI (244) cpu_start: Pro cpu start user code[0m
+[0;32mI (244) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (244) app_init: Application information:[0m
+[0;32mI (247) app_init: Project name:     GPIO_Example[0m
+[0;32mI (252) app_init: App version:      1.0. 1[0m
+[0;32mI (257) app_init: Compile time:     May  5 2025 14:22:33[0m
+[0;32mI (263) app_init: ELF file SHA256:  fa4e5d19c...[0m
+[0;32mI (268) app_init: ESP-IDF:          v5.3.1-dirty[0m
+[0;32mI (273) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (278) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (283) efuse_init: Chip rev:         v0.1[0m
+[0;32mI (288) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (295) heap_init: At 3FC9F050 len 0004A6C0 (297 KiB): RAM[0m
+[0;32mI (301) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (307) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (313) heap_init: At 600FE104 len 00001EE4 (7 KiB): RTCRAM[0m
+[0;32mI (321) spi_flash: detected chip: gd[0m
+[0;32mI (324) spi_flash: flash io: dio[0m
+[0;32mI (329) sleep: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (335) sleep: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (342) coexist: coex firmware version: 4482466[0m
+[0;32mI (347) coexist: coexist rom version e7ae62f[0m
+[0;32mI (353) main_task: Started on CPU0[0m
+[0;32mI (363) main_task: Calling app_main()[0m
+[0;32mI (373) BLE_INIT: BT controller compile version [aa16a46][0m
+[0;32mI (373) BLE_INIT: Bluetooth MAC: dc:54:75:ca:f1:fe[0m
+[0;32mI (373) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10[0m
+[0;33mW (413) phy_init: saving new calibration data because of checksum failure, mode(0)[0m
+[0;32mI (473) NimBLE: GAP procedure initiated: stop advertising.
+[0m
+[0;32mI (473) NimBLE: Failed to restore IRKs from store; status=8
+[0m
+[0;32mI (473) NimBLE: GAP procedure initiated: advertise; [0m
+[0;32mI (483) NimBLE: disc_mode=2[0m
+[0;32mI (483) NimBLE:  adv_channel_map=0 own_addr_type=0 adv_filter_policy=0 adv_itvl_min=128 adv_itvl_max=256[0m
+[0;32mI (493) NimBLE: 
+[0m
+[0;32mI (493) BLE-Server: BLE initialization complete[0m
+FSR0: 473
+FSR1: 466
+FSR2: 461
+FSR3: 456
+FSR4: 456
+FSR5: 455
+FSR6: 458
+FSR7: 460
+-----------
+[0;32mI (513) main_task: Returned from app_main()[0m
+FSR0: 491
+FSR1: 474
+FSR2: 471
+FSR3: 476
+FSR4: 473
+FSR5: 462
+FSR6: 459
+FSR7: 455
+-----------
+FSR0: 493
+FSR1: 476
+FSR2: 473
+FSR3: 472
+FSR4: 473
+FSR5: 471
+FSR6: 459
+FSR7: 461
+-----------
+FSR0: 487
+FSR1: 471
+FSR2: 469
+FSR3: 469
+FSR4: 471
+FSR5: 459
+FSR6: 457
+FSR7: 459
+-----------
+FSR0: 4095
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 4095
+FSR5: 4095
+FSR6: 4095
+FSR7: 4095
+-----------
+FSR0: 4095
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 4095
+FSR5: 4095
+FSR6: 4095
+FSR7: 4095
+-----------
+FSR0: 559
+FSR1: 543
+FSR2: 540
+FSR3: 540
+FSR4: 538
+FSR5: 536
+FSR6: 532
+FSR7: 530
+-----------
+FSR0: 4095
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 4095
+FSR5: 4095
+FSR6: 4095
+FSR7: 4095
+-----------
+FSR0: 4095
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 4095
+FSR5: 4095
+FSR6: 4095
+FSR7: 4095
+-----------
+FSR0: 565
+FSR1: 539
+FSR2: 536
+FSR3: 540
+FSR4: 536
+FSR5: 533
+FSR6: 523
+FSR7: 529
+-----------
+FSR0: 533
+FSR1: 524
+FSR2: 509
+FSR3: 508
+FSR4: 503
+FSR5: 507
+FSR6: 499
+FSR7: 503
+-----------
+FSR0: 485
+FSR1: 470
+FSR2: 467
+FSR3: 461
+FSR4: 458
+FSR5: 463
+FSR6: 453
+FSR7: 446
+-----------
+FSR0: 509
+FSR1: 492
+FSR2: 489
+FSR3: 486
+FSR4: 488
+FSR5: 487
+FSR6: 474
+FSR7: 473
+-----------
+FSR0: 511
+FSR1: 495
+FSR2: 491
+FSR3: 499
+FSR4: 485
+FSR5: 490
+FSR6: 477
+FSR7: 475
+-----------
+FSR0: 500
+FSR1: 484
+FSR2: 477
+FSR3: 475
+FSR4: 477
+FSR5: 469
+FSR6: 466
+FSR7: 471
+-----------
+FSR0: 495
+FSR1: 487
+FSR2: 476
+FSR3: 475
+FSR4: 471
+FSR5: 475
+FSR6: 473
+FSR7: 471
+-----------
+FSR0: 494
+FSR1: 472
+FSR2: 470
+FSR3: 467
+FSR4: 463
+FSR5: 469
+FSR6: 458
+FSR7: 462
+-----------
+FSR0: 477
+FSR1: 459
+FSR2: 456
+FSR3: 454
+FSR4: 457
+FSR5: 445
+FSR6: 443
+FSR7: 439
+-----------
+FSR0: 459
+FSR1: 441
+FSR2: 439
+FSR3: 444
+FSR4: 442
+FSR5: 431
+FSR6: 438
+FSR7: 428
+-----------
+FSR0: 4095
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 4095
+FSR5: 4095
+FSR6: 4095
+FSR7: 4095
+-----------
+FSR0: 4095
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 4095
+FSR5: 4095
+FSR6: 4095
+FSR7: 4095
+-----------
+FSR0: 2197
+FSR1: 2159
+FSR2: 2148
+FSR3: 2148
+FSR4: 2123
+FSR5: 2105
+FSR6: 2086
+FSR7: 2075
+-----------
+FSR0: 544
+FSR1: 529
+FSR2: 529
+FSR3: 535
+FSR4: 536
+FSR5: 527
+FSR6: 529
+FSR7: 531
+-----------
+FSR0: 4095
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 4095
+FSR5: 4095
+FSR6: 4095
+FSR7: 4095
+-----------
+FSR0: 4095
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 4095
+FSR5: 4095
+FSR6: 4095
+FSR7: 4095
+-----------
+FSR0: 554
+FSR1: 543
+FSR2: 535
+FSR3: 534
+FSR4: 541
+FSR5: 530
+FSR6: 531
+FSR7: 532
+-----------
+FSR0: 531
+FSR1: 508
+FSR2: 505
+FSR3: 506
+FSR4: 500
+FSR5: 495
+FSR6: 491
+FSR7: 495
+-----------
+FSR0: 519
+FSR1: 495
+FSR2: 493
+FSR3: 495
+FSR4: 493
+FSR5: 484
+FSR6: 483
+FSR7: 487
+-----------
+FSR0: 508
+FSR1: 491
+FSR2: 489
+FSR3: 492
+FSR4: 482
+FSR5: 478
+FSR6: 484
+FSR7: 474
+-----------
+FSR0: 483
+FSR1: 466
+FSR2: 462
+FSR3: 462
+FSR4: 460
+FSR5: 473
+FSR6: 467
+FSR7: 453
+-----------
+FSR0: 4095
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 4095
+FSR5: 4095
+FSR6: 4095
+FSR7: 4095
+-----------
+FSR0: 4095
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 4095
+FSR5: 4095
+FSR6: 4095
+FSR7: 4095
+-----------
+FSR0: 4095
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 4095
+FSR5: 4095
+FSR6: 4095
+FSR7: 4095
+-----------
+FSR0: 565
+FSR1: 547
+FSR2: 541
+FSR3: 538
+FSR4: 536
+FSR5: 539
+FSR6: 537
+FSR7: 530
+-----------
+FSR0: 522
+FSR1: 502
+FSR2: 499
+FSR3: 494
+FSR4: 491
+FSR5: 499
+FSR6: 493
+FSR7: 485
+-----------
+FSR0: 4095
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 4095
+FSR5: 4095
+FSR6: 4095
+FSR7: 4095
+-----------
+FSR0: 4095
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 4095
+FSR5: 4095
+FSR6: 4095
+FSR7: 4095
+-----------
+FSR0: 4095
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 4095
+FSR5: 4095
+FSR6: 4095
+FSR7: 4095
+-----------
+FSR0: 583
+FSR1: 563
+FSR2: 557
+FSR3: 562
+FSR4: 553
+FSR5: 556
+FSR6: 547
+FSR7: 551
+-----------
+FSR0: 536
+FSR1: 520
+FSR2: 509
+FSR3: 519
+FSR4: 504
+FSR5: 499
+FSR6: 505
+FSR7: 495
+-----------
+FSR0: 4095
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 4095
+FSR5: 4095
+FSR6: 4095
+FSR7: 4095
+-----------
+FSR0: 4095
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 4095
+FSR5: 4095
+FSR6: 4095
+FSR7: 4095
+-----------
+FSR0: 4095
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 4095
+FSR5: 4095
+FSR6: 4095
+FSR7: 4095
+-----------
+FSR0: 4095
+FSR1: 4095
+FSR2: 4095
+FSR3: 4095
+FSR4: 4095
+FSR5: 4095
+FSR6: 4095
+FSR7: 4095
+-----------
+FSR0: 730
+FSR1: 703
+FSR2: 699
+FSR3: 700
+FSR4: 691
+FSR5: 685
+FSR6: 680
+FSR7: 682
+-----------
+FSR0: 563
+FSR1: 552
+FSR2: 540
+FSR3: 549
+FSR4: 539
+FSR5: 537
+FSR6: 525
+FSR7: 531
+-----------
+FSR0: 549
+FSR1: 531
+FSR2: 525
+FSR3: 522
+FSR4: 527
+FSR5: 519
+FSR6: 518
+FSR7: 507
+-----------
+FSR0: 537
+FSR1: 519
+FSR2: 509
+FSR3: 493
+FSR4: 502
+FSR5: 503
+FSR6: 493
+FSR7: 495
+-----------
+FSR0: 530
+FSR1: 505
+FSR2: 501
+FSR3: 498
+FSR4: 499
+FSR5: 490
+FSR6: 491
+FSR7: 483
+-----------
+FSR0: 520
+FSR1: 501
+FSR2: 495
+FSR3: 499
+FSR4: 487
+FSR5: 485
+FSR6: 479
+FSR7: 475
+-----------
+FSR0: 484
+FSR1: 471
+FSR2: 461
+FSR3: 461
+FSR4: 447
+FSR5: 455
+FSR6: 447
+FSR7: 440
+-----------
