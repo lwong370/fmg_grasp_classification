@@ -21,10 +21,33 @@ char *TAG = "BLE-Server";
 static const char *DEVICE_NAME = "PoohBand";
 
 uint8_t ble_addr_type;
+uint16_t attr_handle;
 static uint16_t conn_handle = BLE_HS_CONN_HANDLE_NONE;
 static uint16_t sensor_data_handle;
+volatile uint8_t notify_client = 0;
+
 
 void ble_app_advertise(void);
+
+static const ble_uuid128_t SERVICE_UUID = BLE_UUID128_INIT(
+    0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef,
+    0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef
+);
+
+static const ble_uuid128_t READ_CHAR_UUID = BLE_UUID128_INIT(
+    0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef,
+    0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0x00, 0x01
+);
+
+static const ble_uuid128_t WRITE_CHAR_UUID = BLE_UUID128_INIT(
+    0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef,
+    0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0x00, 0x02
+);
+
+// static const ble_uuid128_t NOTIFY_CHAR_UUID = BLE_UUID128_INIT(
+//     0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef,
+//     0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0x00, 0x03
+// );
 
 // Write data to ESP32 defined as server
 static int device_write(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt, void *arg) {
@@ -33,7 +56,7 @@ static int device_write(uint16_t conn_handle, uint16_t attr_handle, struct ble_g
 }
 
 // Read data from ESP32 defined as server
-static int device_read(uint16_t con_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt, void *arg) {
+static int device_read(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt, void *arg) {
     os_mbuf_append(ctxt->om, "Data from the server", strlen("Data from the server"));
     return 0;
 }
@@ -42,50 +65,132 @@ static int device_read(uint16_t con_handle, uint16_t attr_handle, struct ble_gat
 // UUID - Universal Unique Identifier
 static const struct ble_gatt_svc_def gatt_svcs[] = {
     {.type = BLE_GATT_SVC_TYPE_PRIMARY,
-     .uuid = BLE_UUID16_DECLARE(0x180),                 // Define UUID for device type
+     .uuid = &SERVICE_UUID.u,
      .characteristics = (struct ble_gatt_chr_def[]){
-         {.uuid = BLE_UUID16_DECLARE(0xFEF4),           // Define UUID for reading
+         {.uuid = &READ_CHAR_UUID.u,
           .flags = BLE_GATT_CHR_F_READ,
           .access_cb = device_read},
-         {.uuid = BLE_UUID16_DECLARE(0xDEAD),           // Define UUID for writing
+         {.uuid = &WRITE_CHAR_UUID.u,
           .flags = BLE_GATT_CHR_F_WRITE,
           .access_cb = device_write},
+        //  {.uuid = &NOTIFY_CHAR_UUID.u,
+        //   .flags = BLE_GATT_CHR_F_NOTIFY,
+        //   .access_cb = device_notify},
          {0}}},
     {0}};
 
+
 // BLE event handling
 static int ble_gap_event(struct ble_gap_event *event, void *arg) {
-    switch (event->type)
-    {
-    // Advertise if connected
-    case BLE_GAP_EVENT_CONNECT:
-        ESP_LOGI("GAP", "BLE GAP EVENT CONNECT %s", event->connect.status == 0 ? "OK!" : "FAILED!");
+    switch (event->type) {
+
+    case BLE_GAP_EVENT_CONNECT: // connection complete (success or fail)
+        ESP_LOGI(TAG, "GAP CONNECT %s", event->connect.status == 0 ? "OK" : "FAILED");
         if (event->connect.status != 0) {
+            // Connection failed, resume advertising
+            ble_app_advertise();
+        } else {
+            // Connected
+            conn_handle = event->connect.conn_handle;
+
+            struct ble_gap_conn_desc desc;
+            if (ble_gap_conn_find(conn_handle, &desc) == 0) {
+                ESP_LOGI(TAG, "connected to %02X:%02X:%02X:%02X:%02X:%02X",
+                         desc.peer_id_addr.val[0], 
+                         desc.peer_id_addr.val[1], 
+                         desc.peer_id_addr.val[2],
+                         desc.peer_id_addr.val[3], 
+                         desc.peer_id_addr.val[4], 
+                         desc.peer_id_addr.val[5]);
+            }
+        }
+        break;
+    
+    case BLE_GAP_EVENT_DISCONNECT: 
+        ESP_LOGI(TAG, "GAP DISCONNECT (reason=%d)", event->disconnect.reason);
+        
+        // Rset conn_handle
+        conn_handle   = BLE_HS_CONN_HANDLE_NONE;
+        attr_handle   = 0;
+        notify_client = false;
+        
+        // Connection terminated; rsume advertising
+        ble_app_advertise();
+        break;
+    
+    case BLE_GAP_EVENT_ADV_COMPLETE:
+        ESP_LOGI(TAG, "ADV complete: reason=%d", event->adv_complete.reason);
+        // Restart if not connected
+        if (conn_handle == BLE_HS_CONN_HANDLE_NONE) {
             ble_app_advertise();
         }
         break;
-     case BLE_GAP_EVENT_DISCONNECT:
-        ESP_LOGI("GAP", "BLE GAP EVENT DISCONNECT");
-        conn_handle = BLE_HS_CONN_HANDLE_NONE;
-        ble_app_advertise();
+    
+    case BLE_GAP_EVENT_SUBSCRIBE: 
+        ESP_LOGI(TAG, "SUBSCRIBE: conn=%d attr=%d cur_notify=%d cur_indicate=%d",
+                 event->subscribe.conn_handle,
+                 event->subscribe.attr_handle,
+                 event->subscribe.cur_notify,
+                 event->subscribe.cur_indicate);
+
+        conn_handle   = event->subscribe.conn_handle;
+        attr_handle   = event->subscribe.attr_handle;
+        notify_client = event->subscribe.cur_notify || event->subscribe.cur_indicate;
         break;
-    case BLE_GAP_EVENT_ADV_COMPLETE:
-        ESP_LOGI("GAP", "BLE GAP EVENT");
-        ble_app_advertise();
+
+    case BLE_GAP_EVENT_NOTIFY_TX: 
+        struct ble_gap_conn_desc desc;
+        if (ble_gap_conn_find(event->notify_tx.conn_handle, &desc) == 0) {
+            ESP_LOGI(TAG,
+                     "%s TX: peer=%02X:%02X:%02X:%02X:%02X:%02X attr=%u status=%d",
+                     event->notify_tx.indication ? "INDIC" : "NOTIF",
+                     desc.peer_id_addr.val[0], 
+                     desc.peer_id_addr.val[1], 
+                     desc.peer_id_addr.val[2],
+                     desc.peer_id_addr.val[3], 
+                     desc.peer_id_addr.val[4], 
+                     desc.peer_id_addr.val[5],
+                     event->notify_tx.attr_handle, event->notify_tx.status);
+        } else {
+            ESP_LOGW(TAG, "NOTIFY_TX: conn not found (handle=%d)", event->notify_tx.conn_handle);
+        }
         break;
-    default:
+    
+    case BLE_GAP_EVENT_MTU: 
+        ESP_LOGI(TAG, "MTU updated: conn=%u cid=%u mtu=%u",
+                 event->mtu.conn_handle, event->mtu.channel_id, event->mtu.value);
+        break;
+
+    case BLE_GAP_EVENT_PHY_UPDATE_COMPLETE: 
+        if (event->phy_updated.status == 0) {
+            uint8_t tx_phy = 0, rx_phy = 0;
+            ble_gap_read_le_phy(event->phy_updated.conn_handle, &tx_phy, &rx_phy);
+            ESP_LOGI(TAG, "PHY update OK: conn=%u tx=%u rx=%u",
+                     event->phy_updated.conn_handle, tx_phy, rx_phy);
+        } else {
+            ESP_LOGW(TAG, "PHY update failed: status=%d", event->phy_updated.status);
+        }
+        break;
+    
+    default: 
+        // Generic fallback 
+        ESP_LOGI(TAG, "GAP event not handled, code:%u", event->type);
         break;
     }
+
     return 0;
 }
 
 // Define the BLE connection
 void ble_app_advertise(void) {
     struct ble_hs_adv_fields fields;
+    struct ble_hs_adv_fields rsp_fields;
+    struct ble_gap_adv_params adv_params = {0};
+
+    // Fill all fields and parameters with zeros
     memset(&fields, 0, sizeof(fields));
-    fields.name = (uint8_t *)"PoohBand";
-    fields.name_len = strlen("PoohBand");
-    fields.name_is_complete = 1;
+    memset(&adv_params, 0, sizeof(adv_params));
+    memset(&rsp_fields, 0, sizeof(rsp_fields));
 
     int rc = ble_gap_adv_set_fields(&fields);
     if (rc != 0) {
@@ -93,12 +198,18 @@ void ble_app_advertise(void) {
         return;
     }
 
-    struct ble_gap_adv_params adv_params = {0};
     adv_params.conn_mode = BLE_GAP_CONN_MODE_UND;
     adv_params.disc_mode = BLE_GAP_DISC_MODE_GEN;
     adv_params.itvl_min = 0x80;
     adv_params.itvl_max = 0x100;
 
+    // Advertising data fields
+    fields.name = (uint8_t *)"PoohBand";
+    fields.name_len = strlen("PoohBand");
+    fields.name_is_complete = 1;
+    fields.tx_pwr_lvl_is_present = 1;
+    fields.tx_pwr_lvl = BLE_HS_ADV_TX_PWR_LVL_AUTO;
+    
     rc = ble_gap_adv_start(ble_addr_type, NULL, BLE_HS_FOREVER, &adv_params, ble_gap_event, NULL);
     if (rc != 0) {
         ESP_LOGE("BLE", "Failed to start advertising; rc=%d", rc);
@@ -224,7 +335,8 @@ void ble_init() {
     //     ESP_LOGE(TAG, "Bluetooth controller enable failed: %s", esp_err_to_name(ret));
     //     return;
     // }
-    // ESP_ERROR_CHECK(esp_nimble_hci_and_controller_init());
+    
+    //ESP_ERROR_CHECK(esp_nimble_hci_and_controller_init());
 
     // Initialize NimBLE
     ret = nimble_port_init();
