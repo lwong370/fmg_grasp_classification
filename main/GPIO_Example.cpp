@@ -42,6 +42,7 @@ const adc_channel_t fsr_pins[NUM_FSRS] = {
 void read_fsr_task(void *pvParameter) {
     int log_counter = 0;
     const int log_interval = 100;
+    int fsr_values[NUM_FSRS];  
     
     // --- Initialize ADC handle and configuration for ADC one-shot mode ---
     adc_oneshot_unit_handle_t adc1_handle;
@@ -79,27 +80,58 @@ void read_fsr_task(void *pvParameter) {
     //TickType_t last_wake_time = xTaskGetTickCount();
 
     while (1) {  
-        // Read a new sample from each FSR      
+        // Read a new sample from each FSR     
         for (int i = 0; i < NUM_FSRS; i++) {
-            // int i = 7;
-            int raw_value;
+            int raw_value = 0;
             esp_err_t err = adc_oneshot_read(adc1_handle, fsr_pins[i], &raw_value);
             if (err == ESP_OK) {
-                
-                // Delay logging so it's readable
-                // if (log_counter == 0) {
-                    printf("FSR%d: %d\n", i, raw_value);  // Print one FSR reading per line
-                // }
-                log_counter = (log_counter + 1) % log_interval;
-
-                // Write new sample in circular buffer
-                signal_buffer[i][buffer_index] = raw_value;
+                printf("FSR%d: %d\n", i, raw_value);
+                fsr_values[i] = raw_value;                       // collect for BLE
+                signal_buffer[i][buffer_index] = raw_value;      // ring buffer
             } else {
                 printf("FSR%d: ADC Read Failed (%d)\n", i, err);
+                fsr_values[i] = 0;                               // keep packet defined
             }
         }
 
         printf("-----------\n");
+
+        // ✅ Send one notification containing all channels
+        ble_send_fsr_sample(fsr_values, NUM_FSRS);
+
+        log_counter = (log_counter + 1) % log_interval;
+ 
+        // for (int i = 0; i < NUM_FSRS; i++) {
+        //     // int i = 7;
+        //     int raw_value = 0;
+        //     esp_err_t err = adc_oneshot_read(adc1_handle, fsr_pins[i], &raw_value);
+        //     if (err == ESP_OK) {
+                
+        //         // Delay logging so it's readable
+        //         // if (log_counter == 0) {
+        //             printf("FSR%d: %d\n", i, raw_value);  // Print one FSR reading per line
+        //         // }
+        //         ble_send_fsr_sample(raw_value, NUM_FSRS);
+
+        //         // log_counter = (log_counter + 1) % log_interval;
+
+        //         fsr_values[i] = raw_value; 
+
+        //         // Write new sample in circular buffer
+        //         signal_buffer[i][buffer_index] = raw_value;
+        //     } else {
+        //         printf("FSR%d: ADC Read Failed (%d)\n", i, err);
+        //         fsr_values[i] = 0;
+        //     }
+        // }
+
+        // printf("-----------\n");
+
+        // // Send one notification containing all channels
+        // ble_send_fsr_sample(fsr_values, NUM_FSRS);
+
+        // // housekeeping
+        // log_counter = (log_counter + 1) % log_interval;
         
         // Update buffer index and add 1 to counter
         buffer_index = (buffer_index + 1) % WINDOW_SIZE;
@@ -148,8 +180,7 @@ extern "C" void app_main(void) {
     //     return;
     // }
 
-    // FSR CODE
+    // Read in FSR sensor data
     xTaskCreate(&read_fsr_task, "read_fsr_task", 4096, NULL, 5, NULL);
         
-    xTaskCreate(&ble_notify_task, "fmg_notify", 4096, NULL, 5, NULL);
 }

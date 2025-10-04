@@ -26,6 +26,7 @@ static uint16_t conn_handle = BLE_HS_CONN_HANDLE_NONE;
 static uint16_t sensor_data_handle;
 volatile uint8_t notify_client = 0;
 
+static QueueHandle_t s_fsr_q = NULL;   // <-- define it here
 
 void ble_app_advertise(void);
 
@@ -44,10 +45,10 @@ static const ble_uuid128_t WRITE_CHAR_UUID = BLE_UUID128_INIT(
     0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0x00, 0x02
 );
 
-// static const ble_uuid128_t NOTIFY_CHAR_UUID = BLE_UUID128_INIT(
-//     0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef,
-//     0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0x00, 0x03
-// );
+static const ble_uuid128_t NOTIFY_CHAR_UUID = BLE_UUID128_INIT(
+    0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef,
+    0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0x00, 0x03
+);
 
 // Write data to ESP32 defined as server
 static int device_write(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt, void *arg) {
@@ -59,6 +60,12 @@ static int device_write(uint16_t conn_handle, uint16_t attr_handle, struct ble_g
 static int device_read(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt, void *arg) {
     os_mbuf_append(ctxt->om, "Data from the server", strlen("Data from the server"));
     return 0;
+}
+
+static int fsr_read_cb(uint16_t ch, uint16_t ah, struct ble_gatt_access_ctxt *ctxt, void *arg){
+    // put your latest cached bytes here; for now just a stub
+    const char *msg = "last FSR value here";
+    return os_mbuf_append(ctxt->om, msg, strlen(msg)) == 0 ? 0 : BLE_ATT_ERR_INSUFFICIENT_RES;
 }
 
 // Array of pointers to other service definitions
@@ -73,9 +80,10 @@ static const struct ble_gatt_svc_def gatt_svcs[] = {
          {.uuid = &WRITE_CHAR_UUID.u,
           .flags = BLE_GATT_CHR_F_WRITE,
           .access_cb = device_write},
-        //  {.uuid = &NOTIFY_CHAR_UUID.u,
-        //   .flags = BLE_GATT_CHR_F_NOTIFY,
-        //   .access_cb = device_notify},
+         { .uuid = &NOTIFY_CHAR_UUID.u,
+          .flags = BLE_GATT_CHR_F_NOTIFY | BLE_GATT_CHR_F_READ,   // (READ optional)
+          .access_cb = fsr_read_cb,
+          .val_handle = &sensor_data_handle },
          {0}}},
     {0}};
 
@@ -187,6 +195,13 @@ void ble_app_advertise(void) {
     struct ble_hs_adv_fields rsp_fields;
     struct ble_gap_adv_params adv_params = {0};
 
+    // Advertising data fields
+    fields.name = (uint8_t *)"PoohBand";
+    fields.name_len = strlen("PoohBand");
+    fields.name_is_complete = 1;
+    fields.tx_pwr_lvl_is_present = 1;
+    fields.tx_pwr_lvl = BLE_HS_ADV_TX_PWR_LVL_AUTO;
+
     // Fill all fields and parameters with zeros
     memset(&fields, 0, sizeof(fields));
     memset(&adv_params, 0, sizeof(adv_params));
@@ -202,13 +217,6 @@ void ble_app_advertise(void) {
     adv_params.disc_mode = BLE_GAP_DISC_MODE_GEN;
     adv_params.itvl_min = 0x80;
     adv_params.itvl_max = 0x100;
-
-    // Advertising data fields
-    fields.name = (uint8_t *)"PoohBand";
-    fields.name_len = strlen("PoohBand");
-    fields.name_is_complete = 1;
-    fields.tx_pwr_lvl_is_present = 1;
-    fields.tx_pwr_lvl = BLE_HS_ADV_TX_PWR_LVL_AUTO;
     
     rc = ble_gap_adv_start(ble_addr_type, NULL, BLE_HS_FOREVER, &adv_params, ble_gap_event, NULL);
     if (rc != 0) {
@@ -257,12 +265,38 @@ void host_task(void *param) {
 //     nimble_port_freertos_init(host_task);      // 6 - Run the thread
 // }
 
+// Pick a max elements constant used consistently across BLE code
+#ifndef BLE_FSR_MAX_ELEMS
+#define BLE_FSR_MAX_ELEMS  16   // or NUM_FSRS, but keep it >= max n you’ll send
+#endif
+
+typedef struct {
+    size_t  len;                                          // payload length in bytes
+    uint8_t bytes[BLE_FSR_MAX_ELEMS * sizeof(int)];       // storage
+} fsr_payload_t;
+
+
+bool ble_send_fsr_sample(const int *data, size_t n)
+{
+    if (!s_fsr_q || !data || n == 0 || n > NUM_FSRS) return false;
+
+    fsr_payload_t p = { .len = n * sizeof(int) };
+    memcpy(p.bytes, data, p.len);
+
+    if (xQueueSend(s_fsr_q, &p, 0) != pdTRUE) {
+        ESP_LOGW(TAG, "FSR queue full; dropping sample");
+        return false;
+    }
+    return true;
+}
+
+
 void ble_notify_task(void *param) {
     float fsr_data[NUM_FSRS] = {2};
 
     while(1)
     {
-        if (conn_handle != BLE_HS_CONN_HANDLE_NONE)
+        if (conn_handle != BLE_HS_CONN_HANDLE_NONE || sensor_data_handle == 0 || !notify_client)
         {
             
             // Create mbuf to hold data
@@ -270,11 +304,10 @@ void ble_notify_task(void *param) {
             
             if (om != NULL)
             {
-                int rc = ble_gattc_notify_custom(conn_handle, sensor_data_handle, om);
+                int rc = ble_gatts_notify_custom(conn_handle, sensor_data_handle, om);
                 if (rc == 0)
                 {
-                    ESP_LOGI(TAG, "Notification sent: [%.1f", 
-                        fsr_data[0]);
+                    ESP_LOGI(TAG, "Notification sent: [%.1f", fsr_data[0]);
                 }
                 else
                 {
@@ -291,13 +324,19 @@ void ble_notify_task(void *param) {
             ESP_LOGW(TAG, "No active connection, waiting...");
         }
         
-        vTaskDelay(pdMS_TO_TICKS(100));  // Send every 100ms (adjust as needed)
+        vTaskDelay(pdMS_TO_TICKS(500));  // Send every 500ms (adjust as needed)
     }
 }
 
+#define NOTIFY_TASK_STACK  4096
+#define NOTIFY_TASK_PRIO   5
+#define FSR_QUEUE_DEPTH    16
 
 void ble_init() {
     esp_err_t ret;
+
+    if (!s_fsr_q) s_fsr_q = xQueueCreate(FSR_QUEUE_DEPTH, sizeof(fsr_payload_t));
+    xTaskCreate(ble_notify_task, "ble_notify_task", 4096, NULL, 6, NULL); // prio > sensor
 
     // Initialize NVS
     ret = nvs_flash_init();
