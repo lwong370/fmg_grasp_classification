@@ -195,17 +195,17 @@ void ble_app_advertise(void) {
     struct ble_hs_adv_fields rsp_fields;
     struct ble_gap_adv_params adv_params = {0};
 
+    // Fill all fields and parameters with zeros
+    memset(&fields, 0, sizeof(fields));
+    memset(&adv_params, 0, sizeof(adv_params));
+    memset(&rsp_fields, 0, sizeof(rsp_fields));
+
     // Advertising data fields
     fields.name = (uint8_t *)"PoohBand";
     fields.name_len = strlen("PoohBand");
     fields.name_is_complete = 1;
     fields.tx_pwr_lvl_is_present = 1;
     fields.tx_pwr_lvl = BLE_HS_ADV_TX_PWR_LVL_AUTO;
-
-    // Fill all fields and parameters with zeros
-    memset(&fields, 0, sizeof(fields));
-    memset(&adv_params, 0, sizeof(adv_params));
-    memset(&rsp_fields, 0, sizeof(rsp_fields));
 
     int rc = ble_gap_adv_set_fields(&fields);
     if (rc != 0) {
@@ -278,55 +278,103 @@ typedef struct {
 
 bool ble_send_fsr_sample(const int *data, size_t n)
 {
-    if (!s_fsr_q || !data || n == 0 || n > NUM_FSRS) return false;
+    printf("ble_send: q=%p data=%p n=%u\n", s_fsr_q, data, (unsigned)n);
 
-    fsr_payload_t p = { .len = n * sizeof(int) };
-    memcpy(p.bytes, data, p.len);
-
-    if (xQueueSend(s_fsr_q, &p, 0) != pdTRUE) {
-        ESP_LOGW(TAG, "FSR queue full; dropping sample");
+    if (!s_fsr_q || !data || n == 0 || n > BLE_FSR_MAX_ELEMS) {
+        printf("ble_send guard FAIL\n");
         return false;
     }
-    return true;
+
+    fsr_payload_t p;
+    p.len = n * sizeof(int);
+    memcpy(p.bytes, data, p.len);
+
+    BaseType_t sent = xQueueSend(s_fsr_q, &p, 0);
+    printf("ble_send: xQueueSend=%ld len=%u first=%d\n",
+           (long)sent, (unsigned)p.len, data ? data[0] : -1);
+    return sent == pdTRUE;
 }
 
 
-void ble_notify_task(void *param) {
-    float fsr_data[NUM_FSRS] = {2};
+// void ble_notify_task(void *param) {
+//     //float fsr_data[NUM_FSRS] = {2};
+//     fsr_payload_t p;
 
-    while(1)
-    {
-        if (conn_handle != BLE_HS_CONN_HANDLE_NONE || sensor_data_handle == 0 || !notify_client)
-        {
+//     while(1)
+//     {
+//         if (conn_handle != BLE_HS_CONN_HANDLE_NONE || sensor_data_handle == 0 || !notify_client)
+//         {
             
-            // Create mbuf to hold data
-            struct os_mbuf *om = ble_hs_mbuf_from_flat(fsr_data, sizeof(fsr_data));
+//             if (xQueueReceive(s_fsr_q, &p, portMAX_DELAY) != pdTRUE) continue;
+
+//             // Create mbuf to hold data
+//             struct os_mbuf *om = ble_hs_mbuf_from_flat(p.bytes, p.len);
             
-            if (om != NULL)
-            {
-                int rc = ble_gatts_notify_custom(conn_handle, sensor_data_handle, om);
-                if (rc == 0)
-                {
-                    ESP_LOGI(TAG, "Notification sent: [%.1f", fsr_data[0]);
-                }
-                else
-                {
-                    ESP_LOGE(TAG, "Error sending notification: %d", rc);
-                }
-            }
-            else
-            {
-                ESP_LOGE(TAG, "Failed to allocate mbuf");
-            }
-        }
-        else
-        {
-            ESP_LOGW(TAG, "No active connection, waiting...");
-        }
+//             if (om != NULL)
+//             {
+//                 int rc = ble_gatts_notify_custom(conn_handle, sensor_data_handle, om);
+//                 if (rc == 0)
+//                 {
+//                     //ESP_LOGI(TAG, "Notification sent: [%.1f", fsr_data[0]);
+//                     ESP_LOGI(TAG, "Notification sent: [%.1f", 2.0);
+//                     int first = 0;
+//                     if (p.len >= sizeof(int)) memcpy(&first, p.bytes, sizeof(int));
+//                         ESP_LOGI(TAG, "Notify queued: attr=0x%04x bytes=%u first=%d", sensor_data_handle, (unsigned)p.len, first);
+//                     }
+//                 else
+//                 {
+//                     ESP_LOGE(TAG, "Error sending notification: %d", rc);
+//                 }
+//             }
+//             else
+//             {
+//                 ESP_LOGE(TAG, "Failed to allocate mbuf");
+//             }
+//         }
+//         else
+//         {
+//             ESP_LOGW(TAG, "No active connection, waiting...");
+//         }
         
-        vTaskDelay(pdMS_TO_TICKS(500));  // Send every 500ms (adjust as needed)
+//         vTaskDelay(pdMS_TO_TICKS(500));  // Send every 500ms (adjust as needed)
+//     }
+// }
+
+void ble_notify_task(void *param)
+{
+    fsr_payload_t p;
+    ESP_LOGI(TAG, "notify task started; q=%p", (void*)s_fsr_q);
+
+    for (;;) {
+        if (conn_handle == BLE_HS_CONN_HANDLE_NONE || sensor_data_handle == 0 || !notify_client) {
+            ESP_LOGD(TAG, "not ready: conn=%d handle=0x%04x sub=%d qwait=%u",
+                     conn_handle, sensor_data_handle, notify_client,
+                     (unsigned)uxQueueMessagesWaiting(s_fsr_q));
+            vTaskDelay(pdMS_TO_TICKS(100));
+            continue;
+        }
+
+        //TODO: Issue here bc nothing added to queue
+        if (xQueueReceive(s_fsr_q, &p, pdMS_TO_TICKS(1000)) != pdTRUE) {
+            ESP_LOGW(TAG, "no packet in 1s; qwait=%u", (unsigned)uxQueueMessagesWaiting(s_fsr_q));
+            continue;
+        }
+
+        struct os_mbuf *om = ble_hs_mbuf_from_flat(p.bytes, p.len);
+        if (!om) { ESP_LOGE(TAG, "mbuf alloc failed"); continue; }
+
+        int rc = ble_gatts_notify_custom(conn_handle, sensor_data_handle, om);
+        if (rc == 0) {
+            int first = 0; if (p.len >= (int)sizeof(int)) memcpy(&first, p.bytes, sizeof(int));
+            ESP_LOGI(TAG, "Notify queued: attr=0x%04x bytes=%u first=%d",
+                     sensor_data_handle, (unsigned)p.len, first);
+        } else {
+            ESP_LOGE(TAG, "Notify failed rc=%d", rc);
+            // os_mbuf_free_chain(om); // only if stack didn't consume on error
+        }
     }
 }
+
 
 #define NOTIFY_TASK_STACK  4096
 #define NOTIFY_TASK_PRIO   5
@@ -334,8 +382,10 @@ void ble_notify_task(void *param) {
 
 void ble_init() {
     esp_err_t ret;
+    esp_log_level_set(TAG, ESP_LOG_DEBUG);
 
     if (!s_fsr_q) s_fsr_q = xQueueCreate(FSR_QUEUE_DEPTH, sizeof(fsr_payload_t));
+    ESP_LOGI(TAG, "FSR queue created: %p (item=%u bytes)", (void*)s_fsr_q, (unsigned)sizeof(fsr_payload_t));
     xTaskCreate(ble_notify_task, "ble_notify_task", 4096, NULL, 6, NULL); // prio > sensor
 
     // Initialize NVS

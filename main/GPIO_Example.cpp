@@ -80,6 +80,7 @@ void read_fsr_task(void *pvParameter) {
     //TickType_t last_wake_time = xTaskGetTickCount();
 
     while (1) {  
+
         // Read a new sample from each FSR     
         for (int i = 0; i < NUM_FSRS; i++) {
             int raw_value = 0;
@@ -96,8 +97,16 @@ void read_fsr_task(void *pvParameter) {
 
         printf("-----------\n");
 
-        // ✅ Send one notification containing all channels
-        ble_send_fsr_sample(fsr_values, NUM_FSRS);
+        // Send one notification containing all channels
+        bool ok = ble_send_fsr_sample(fsr_values, NUM_FSRS);
+
+        printf("TEST: testing this");
+        if (!ok) {
+            ESP_LOGW(TAG, "enqueue failed (queue null/full or n invalid)");
+        } else {
+            ESP_LOGW(TAG, "queued success");
+        }
+
 
         log_counter = (log_counter + 1) % log_interval;
  
