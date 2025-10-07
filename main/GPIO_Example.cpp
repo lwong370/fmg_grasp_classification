@@ -69,7 +69,12 @@ void read_fsr_task(void *pvParameter) {
 
     // --- Circular buffer for each FSR Channel ---
     // Holds the last sample of size WINDOW_SIZE for each FSR sensor
-    int signal_buffer[NUM_FSRS][WINDOW_SIZE] = {0};
+    static int signal_buffer[NUM_FSRS][WINDOW_SIZE] = {0};
+    ESP_LOGI(TAG, "Using static buffer: %d bytes", sizeof(signal_buffer));
+
+    //int (*signal_buffer)[WINDOW_SIZE] = (int(*)[WINDOW_SIZE])heap_caps_calloc(NUM_FSRS, sizeof(*signal_buffer), MALLOC_CAP_DEFAULT);
+    //assert(signal_buffer);
+
     
     // Index to store next sample in circular buffer
     int buffer_index = 0;
@@ -79,7 +84,14 @@ void read_fsr_task(void *pvParameter) {
 
     //TickType_t last_wake_time = xTaskGetTickCount();
 
+    
+
+    printf("=== ENTERING MAIN LOOP ===\n");
+
     while (1) {  
+
+        printf("HWM=%u bytes\n", (unsigned)uxTaskGetStackHighWaterMark(NULL) * sizeof(StackType_t));
+
 
         // Read a new sample from each FSR     
         for (int i = 0; i < NUM_FSRS; i++) {
@@ -89,6 +101,8 @@ void read_fsr_task(void *pvParameter) {
                 printf("FSR%d: %d\n", i, raw_value);
                 fsr_values[i] = raw_value;                       // collect for BLE
                 signal_buffer[i][buffer_index] = raw_value;      // ring buffer
+                //xQueueSend(feature_queue, &fsr_values, 0);
+
             } else {
                 printf("FSR%d: ADC Read Failed (%d)\n", i, err);
                 fsr_values[i] = 0;                               // keep packet defined
@@ -102,11 +116,12 @@ void read_fsr_task(void *pvParameter) {
 
         printf("TEST: testing this");
         if (!ok) {
-            ESP_LOGW(TAG, "enqueue failed (queue null/full or n invalid)");
+           // ESP_LOGW(TAG, "enqueue failed (queue null/full or n invalid)");
+            printf("enqueue failed (queue null/full or n invalid)");
         } else {
-            ESP_LOGW(TAG, "queued success");
+            //ESP_LOGW(TAG, "queued success");
+            printf("queued success");
         }
-
 
         log_counter = (log_counter + 1) % log_interval;
  
@@ -143,31 +158,31 @@ void read_fsr_task(void *pvParameter) {
         // log_counter = (log_counter + 1) % log_interval;
         
         // Update buffer index and add 1 to counter
-        buffer_index = (buffer_index + 1) % WINDOW_SIZE;
-        sample_counter++;
+        // buffer_index = (buffer_index + 1) % WINDOW_SIZE;
+        // sample_counter++;
 
-        // Check if it's time to extract a new window (after 50 ms worth of data)
-        if (sample_counter >= STEP_SIZE) {
-            sample_counter = 0;
+        // // Check if it's time to extract a new window (after 50 ms worth of data)
+        // if (sample_counter >= STEP_SIZE) {
+        //     sample_counter = 0;
             
-            // To store a vector of all channels at a certain time period
-            Window window;
+        //     // To store a vector of all channels at a certain time period
+        //     Window window;
             
-            // Build full window of recent samples for each FSR channel
-            for (int ch = 0; ch < NUM_FSRS; ch++) {
+        //     // Build full window of recent samples for each FSR channel
+        //     for (int ch = 0; ch < NUM_FSRS; ch++) {
                 
-                // To store a vector of one channel
-                std::vector<int> channel;
+        //         // To store a vector of one channel
+        //         std::vector<int> channel;
                 
-                for (int i = 0; i < WINDOW_SIZE; i++) {
-                    // Define idx as the "read index", accouting for circular buffer wrap-around
-                    int idx = (buffer_index + i) % WINDOW_SIZE;
-                    channel.push_back(signal_buffer[ch][idx]);
-                }
+        //         for (int i = 0; i < WINDOW_SIZE; i++) {
+        //             // Define idx as the "read index", accouting for circular buffer wrap-around
+        //             int idx = (buffer_index + i) % WINDOW_SIZE;
+        //             channel.push_back(signal_buffer[ch][idx]);
+        //         }
                 
-                // Add one full channel to the window vector
-                window.push_back(channel);
-            }
+        //         // Add one full channel to the window vector
+        //         window.push_back(channel);
+        //     }
             
             // // Extract MAV features from window and send to prediction queue
             // MAVFeature features = extract_mav_feature_from_window(window);
@@ -175,7 +190,7 @@ void read_fsr_task(void *pvParameter) {
         }
         // vTaskDelayUntil(&last_wake_time, pdMS_TO_TICKS(SAMPLE_RATE_MS));
         vTaskDelay(pdMS_TO_TICKS(500));
-    }
+    //}
     adc_oneshot_del_unit(adc1_handle);
     vTaskDelete(NULL);
 }
@@ -190,6 +205,6 @@ extern "C" void app_main(void) {
     // }
 
     // Read in FSR sensor data
-    xTaskCreate(&read_fsr_task, "read_fsr_task", 4096, NULL, 5, NULL);
+    xTaskCreate(&read_fsr_task, "read_fsr_task", 16384, NULL, 5, NULL);
         
 }

@@ -296,84 +296,84 @@ bool ble_send_fsr_sample(const int *data, size_t n)
 }
 
 
-// void ble_notify_task(void *param) {
-//     //float fsr_data[NUM_FSRS] = {2};
-//     fsr_payload_t p;
-
-//     while(1)
-//     {
-//         if (conn_handle != BLE_HS_CONN_HANDLE_NONE || sensor_data_handle == 0 || !notify_client)
-//         {
-            
-//             if (xQueueReceive(s_fsr_q, &p, portMAX_DELAY) != pdTRUE) continue;
-
-//             // Create mbuf to hold data
-//             struct os_mbuf *om = ble_hs_mbuf_from_flat(p.bytes, p.len);
-            
-//             if (om != NULL)
-//             {
-//                 int rc = ble_gatts_notify_custom(conn_handle, sensor_data_handle, om);
-//                 if (rc == 0)
-//                 {
-//                     //ESP_LOGI(TAG, "Notification sent: [%.1f", fsr_data[0]);
-//                     ESP_LOGI(TAG, "Notification sent: [%.1f", 2.0);
-//                     int first = 0;
-//                     if (p.len >= sizeof(int)) memcpy(&first, p.bytes, sizeof(int));
-//                         ESP_LOGI(TAG, "Notify queued: attr=0x%04x bytes=%u first=%d", sensor_data_handle, (unsigned)p.len, first);
-//                     }
-//                 else
-//                 {
-//                     ESP_LOGE(TAG, "Error sending notification: %d", rc);
-//                 }
-//             }
-//             else
-//             {
-//                 ESP_LOGE(TAG, "Failed to allocate mbuf");
-//             }
-//         }
-//         else
-//         {
-//             ESP_LOGW(TAG, "No active connection, waiting...");
-//         }
-        
-//         vTaskDelay(pdMS_TO_TICKS(500));  // Send every 500ms (adjust as needed)
-//     }
-// }
-
-void ble_notify_task(void *param)
-{
+void ble_notify_task(void *param) {
+    //float fsr_data[NUM_FSRS] = {2};
     fsr_payload_t p;
-    ESP_LOGI(TAG, "notify task started; q=%p", (void*)s_fsr_q);
 
-    for (;;) {
-        if (conn_handle == BLE_HS_CONN_HANDLE_NONE || sensor_data_handle == 0 || !notify_client) {
-            ESP_LOGD(TAG, "not ready: conn=%d handle=0x%04x sub=%d qwait=%u",
-                     conn_handle, sensor_data_handle, notify_client,
-                     (unsigned)uxQueueMessagesWaiting(s_fsr_q));
-            vTaskDelay(pdMS_TO_TICKS(100));
-            continue;
+    while(1)
+    {
+        if (conn_handle != BLE_HS_CONN_HANDLE_NONE && sensor_data_handle != 0 && notify_client)
+        {
+            
+           //if (xQueueReceive(s_fsr_q, &p, portMAX_DELAY) != pdTRUE) continue;
+
+            // Create mbuf to hold data
+            struct os_mbuf *om = ble_hs_mbuf_from_flat(p.bytes, p.len);
+            
+            if (om != NULL)
+            {
+                int rc = ble_gatts_notify_custom(conn_handle, sensor_data_handle, om);
+                if (rc == 0)
+                {
+                    //ESP_LOGI(TAG, "Notification sent: [%.1f", fsr_data[0]);
+                    ESP_LOGI(TAG, "Notification sent: [%.1f", 2.0);
+                    int first = 0;
+                    if (p.len >= sizeof(int)) memcpy(&first, p.bytes, sizeof(int));
+                        ESP_LOGI(TAG, "Notify queued: attr=0x%04x bytes=%u first=%d", sensor_data_handle, (unsigned)p.len, first);
+                    }
+                else
+                {
+                    ESP_LOGE(TAG, "Error sending notification: %d", rc);
+                }
+            }
+            else
+            {
+                ESP_LOGE(TAG, "Failed to allocate mbuf");
+            }
         }
-
-        //TODO: Issue here bc nothing added to queue
-        if (xQueueReceive(s_fsr_q, &p, pdMS_TO_TICKS(1000)) != pdTRUE) {
-            ESP_LOGW(TAG, "no packet in 1s; qwait=%u", (unsigned)uxQueueMessagesWaiting(s_fsr_q));
-            continue;
+        else
+        {
+            ESP_LOGW(TAG, "No active connection, waiting...");
         }
-
-        struct os_mbuf *om = ble_hs_mbuf_from_flat(p.bytes, p.len);
-        if (!om) { ESP_LOGE(TAG, "mbuf alloc failed"); continue; }
-
-        int rc = ble_gatts_notify_custom(conn_handle, sensor_data_handle, om);
-        if (rc == 0) {
-            int first = 0; if (p.len >= (int)sizeof(int)) memcpy(&first, p.bytes, sizeof(int));
-            ESP_LOGI(TAG, "Notify queued: attr=0x%04x bytes=%u first=%d",
-                     sensor_data_handle, (unsigned)p.len, first);
-        } else {
-            ESP_LOGE(TAG, "Notify failed rc=%d", rc);
-            // os_mbuf_free_chain(om); // only if stack didn't consume on error
-        }
+        
+        vTaskDelay(pdMS_TO_TICKS(500));  // Send every 500ms (adjust as needed)
     }
 }
+
+// void ble_notify_task(void *param)
+// {
+//     fsr_payload_t p;
+//     ESP_LOGI(TAG, "notify task started; q=%p", (void*)s_fsr_q);
+
+//     for (;;) {
+//         if (conn_handle == BLE_HS_CONN_HANDLE_NONE || sensor_data_handle == 0 || !notify_client) {
+//             ESP_LOGD(TAG, "not ready: conn=%d handle=0x%04x sub=%d qwait=%u",
+//                      conn_handle, sensor_data_handle, notify_client,
+//                      (unsigned)uxQueueMessagesWaiting(s_fsr_q));
+//             vTaskDelay(pdMS_TO_TICKS(100));
+//             continue;
+//         }
+
+//         //TODO: Issue here bc nothing added to queue
+//         if (xQueueReceive(s_fsr_q, &p, pdMS_TO_TICKS(1000)) != pdTRUE) {
+//             ESP_LOGW(TAG, "no packet in 1s; qwait=%u", (unsigned)uxQueueMessagesWaiting(s_fsr_q));
+//             continue;
+//         }
+
+//         struct os_mbuf *om = ble_hs_mbuf_from_flat(p.bytes, p.len);
+//         if (!om) { ESP_LOGE(TAG, "mbuf alloc failed"); continue; }
+
+//         int rc = ble_gatts_notify_custom(conn_handle, sensor_data_handle, om);
+//         if (rc == 0) {
+//             int first = 0; if (p.len >= (int)sizeof(int)) memcpy(&first, p.bytes, sizeof(int));
+//             ESP_LOGI(TAG, "Notify queued: attr=0x%04x bytes=%u first=%d",
+//                      sensor_data_handle, (unsigned)p.len, first);
+//         } else {
+//             ESP_LOGE(TAG, "Notify failed rc=%d", rc);
+//             // os_mbuf_free_chain(om); // only if stack didn't consume on error
+//         }
+//     }
+// }
 
 
 #define NOTIFY_TASK_STACK  4096
