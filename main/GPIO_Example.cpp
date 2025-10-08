@@ -40,6 +40,7 @@ const adc_channel_t fsr_pins[NUM_FSRS] = {
 
 // FSR CODE
 void read_fsr_task(void *pvParameter) {
+    printf("testing this read\n");   
     int log_counter = 0;
     const int log_interval = 100;
     int fsr_values[NUM_FSRS];  
@@ -110,6 +111,7 @@ void read_fsr_task(void *pvParameter) {
         }
 
         printf("-----------\n");
+        printf("testing this againnn\n");
 
         // Send one notification containing all channels
         bool ok = ble_send_fsr_sample(fsr_values, NUM_FSRS);
@@ -196,6 +198,7 @@ void read_fsr_task(void *pvParameter) {
 }
 
 extern "C" void app_main(void) {
+    printf("=== BEGINN ===\n");
     ble_init();
     
     // feature_queue = xQueueCreate(FEATURE_QUEUE_LENGTH, sizeof(MAVFeature));
@@ -206,5 +209,5 @@ extern "C" void app_main(void) {
 
     // Read in FSR sensor data
     xTaskCreate(&read_fsr_task, "read_fsr_task", 16384, NULL, 5, NULL);
-        
+    printf("xTaskCreate(read_fsr_task)");
 }

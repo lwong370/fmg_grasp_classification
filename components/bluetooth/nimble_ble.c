@@ -17,8 +17,12 @@
 #include "esp_bt.h"
 #include "../components/constants/config.h"
 
+#define NOTIFY_TASK_STACK  4096
+#define NOTIFY_TASK_PRIO   5
+#define FSR_QUEUE_DEPTH    1
+
 char *TAG = "BLE-Server";
-static const char *DEVICE_NAME = "PoohBand";
+    static const char *DEVICE_NAME = "PoohBand";
 
 uint8_t ble_addr_type;
 uint16_t attr_handle;
@@ -224,6 +228,10 @@ void ble_app_advertise(void) {
     }
 }
 
+bool ble_notify_ready(void) {
+    return (conn_handle != BLE_HS_CONN_HANDLE_NONE) && (sensor_data_handle != 0) && (notify_client);
+}
+
 // The application
 void ble_app_on_sync(void) {
     // Get a valid BLE address type
@@ -278,21 +286,22 @@ typedef struct {
 
 bool ble_send_fsr_sample(const int *data, size_t n)
 {
-    printf("ble_send: q=%p data=%p n=%u\n", s_fsr_q, data, (unsigned)n);
 
     if (!s_fsr_q || !data || n == 0 || n > BLE_FSR_MAX_ELEMS) {
-        printf("ble_send guard FAIL\n");
         return false;
     }
 
-    fsr_payload_t p;
-    p.len = n * sizeof(int);
-    memcpy(p.bytes, data, p.len);
+    // fsr_payload_t p;
+    // p.len = n * sizeof(int);
+    // memcpy(p.bytes, data, p.len);
 
-    BaseType_t sent = xQueueSend(s_fsr_q, &p, 0);
-    printf("ble_send: xQueueSend=%ld len=%u first=%d\n",
-           (long)sent, (unsigned)p.len, data ? data[0] : -1);
-    return sent == pdTRUE;
+    // BaseType_t sent = xQueueSend(s_fsr_q, &p, 0);
+    // return sent == pdTRUE;
+
+    fsr_payload_t p;
+    p.len = n * sizeof(int32_t);
+    memcpy(p.bytes, data, p.len);
+    return xQueueOverwrite(s_fsr_q, &p) == pdTRUE;
 }
 
 
@@ -305,7 +314,7 @@ void ble_notify_task(void *param) {
         if (conn_handle != BLE_HS_CONN_HANDLE_NONE && sensor_data_handle != 0 && notify_client)
         {
             
-           //if (xQueueReceive(s_fsr_q, &p, portMAX_DELAY) != pdTRUE) continue;
+           if (xQueueReceive(s_fsr_q, &p, portMAX_DELAY) != pdTRUE) continue;
 
             // Create mbuf to hold data
             struct os_mbuf *om = ble_hs_mbuf_from_flat(p.bytes, p.len);
@@ -374,11 +383,6 @@ void ble_notify_task(void *param) {
 //         }
 //     }
 // }
-
-
-#define NOTIFY_TASK_STACK  4096
-#define NOTIFY_TASK_PRIO   5
-#define FSR_QUEUE_DEPTH    16
 
 void ble_init() {
     esp_err_t ret;

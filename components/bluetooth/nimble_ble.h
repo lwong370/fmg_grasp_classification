@@ -8,9 +8,7 @@ void ble_init(void);
 
 void ble_notify_task(void *param);
 
-bool ble_is_connected(void);
-
-bool ble_is_subscribed(void);
+bool ble_notify_ready(void);
 
 bool ble_send_notification(const uint8_t *data, size_t len);
 
