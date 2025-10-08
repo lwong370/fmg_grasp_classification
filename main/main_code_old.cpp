@@ -229,16 +229,12 @@ void read_fsr_task(void *pvParameter) {
             bool ok = ble_send_fsr_sample(fsr_values, NUM_FSRS);  
 
             if (!ok) {
-            // ESP_LOGW(TAG, "enqueue failed (queue null/full or n invalid)");
-                printf("enqueue failed (queue null/full or n invalid)");
+                ESP_LOGW(TAG, "enqueue failed (queue null/full or n invalid)");
             } else {
-                //ESP_LOGW(TAG, "queued success");
-                printf("queued success");
+                ESP_LOGW(TAG, "queued success");
             }
         }
-
         
-
         log_counter = (log_counter + 1) % log_interval;
  
         // for (int i = 0; i < NUM_FSRS; i++) {

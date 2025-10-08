@@ -1,4 +1,4 @@
-idf_component_register(SRCS "main_code_old.cpp" "GPIO_Example.cpp" "../liblinear/linear.cpp" "../components/feature_extraction/feature_extraction.cpp" "../components/predictor/predict.cpp" 
+idf_component_register(SRCS "main_code_old.cpp" "../liblinear/linear.cpp" "../components/feature_extraction/feature_extraction.cpp" "../components/predictor/predict.cpp" 
                             "../components/bluetooth/nimble_ble.c"                        
                        INCLUDE_DIRS "." "../liblinear"
                        PRIV_REQUIRES predictor feature_extraction bluetooth driver esp_adc)
