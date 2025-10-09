@@ -20,54 +20,60 @@
 #define NOTIFY_TASK_STACK  4096
 #define NOTIFY_TASK_PRIO   5
 #define FSR_QUEUE_DEPTH    1
+#ifndef BLE_FSR_MAX_ELEMS
+#define BLE_FSR_MAX_ELEMS  16   // or NUM_FSRS, but keep it >= max n you’ll send
+#endif
 
 char *TAG = "BLE-Server";
-    static const char *DEVICE_NAME = "PoohBand";
+static const char *DEVICE_NAME = "PoohBand";
 
 uint8_t ble_addr_type;
 uint16_t attr_handle;
-static uint16_t conn_handle = BLE_HS_CONN_HANDLE_NONE;
-static uint16_t sensor_data_handle;
-volatile uint8_t notify_client = 0;
+static uint16_t conn_handle = BLE_HS_CONN_HANDLE_NONE;    // active connection
+static uint16_t sensor_data_handle;                       // handle returned by GATT registration
+volatile uint8_t notify_client = 0;                       // if client subscribed to notify
 
-static QueueHandle_t s_fsr_q = NULL;   // <-- define it here
+static QueueHandle_t s_fsr_q = NULL;                      // queue for sensor inputs
 
 void ble_app_advertise(void);
 
+typedef struct {
+    size_t  len;                                          // payload length in bytes
+    uint8_t bytes[BLE_FSR_MAX_ELEMS * sizeof(int)];       // storage
+} fsr_payload_t;
+
+// Define 128-bit UUIDs for custom services/characteristics
 static const ble_uuid128_t SERVICE_UUID = BLE_UUID128_INIT(
     0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef,
     0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef
 );
-
 static const ble_uuid128_t READ_CHAR_UUID = BLE_UUID128_INIT(
     0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef,
     0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0x00, 0x01
 );
-
 static const ble_uuid128_t WRITE_CHAR_UUID = BLE_UUID128_INIT(
     0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef,
     0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0x00, 0x02
 );
-
 static const ble_uuid128_t NOTIFY_CHAR_UUID = BLE_UUID128_INIT(
     0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef,
     0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0x00, 0x03
 );
 
-// Write data to ESP32 defined as server
+// Write data to ESP32 
 static int device_write(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt, void *arg) {
     printf("Data from the client: %.*s\n", ctxt->om->om_len, ctxt->om->om_data);
     return 0;
 }
 
-// Read data from ESP32 defined as server
+// Read data from ESP32 
 static int device_read(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt, void *arg) {
     os_mbuf_append(ctxt->om, "Data from the server", strlen("Data from the server"));
     return 0;
 }
 
 static int fsr_read_cb(uint16_t ch, uint16_t ah, struct ble_gatt_access_ctxt *ctxt, void *arg){
-    // put your latest cached bytes here; for now just a stub
+    // put latest cached bytes here
     const char *msg = "last FSR value here";
     return os_mbuf_append(ctxt->om, msg, strlen(msg)) == 0 ? 0 : BLE_ATT_ERR_INSUFFICIENT_RES;
 }
@@ -96,7 +102,7 @@ static const struct ble_gatt_svc_def gatt_svcs[] = {
 static int ble_gap_event(struct ble_gap_event *event, void *arg) {
     switch (event->type) {
 
-    case BLE_GAP_EVENT_CONNECT: // connection complete (success or fail)
+    case BLE_GAP_EVENT_CONNECT: // checks connection result 
         ESP_LOGI(TAG, "GAP CONNECT %s", event->connect.status == 0 ? "OK" : "FAILED");
         if (event->connect.status != 0) {
             // Connection failed, resume advertising
@@ -118,7 +124,7 @@ static int ble_gap_event(struct ble_gap_event *event, void *arg) {
         }
         break;
     
-    case BLE_GAP_EVENT_DISCONNECT: 
+    case BLE_GAP_EVENT_DISCONNECT: // connection disconnected
         ESP_LOGI(TAG, "GAP DISCONNECT (reason=%d)", event->disconnect.reason);
         
         // Rset conn_handle
@@ -126,11 +132,11 @@ static int ble_gap_event(struct ble_gap_event *event, void *arg) {
         attr_handle   = 0;
         notify_client = false;
         
-        // Connection terminated; rsume advertising
+        // Connection terminated, resume advertising
         ble_app_advertise();
         break;
     
-    case BLE_GAP_EVENT_ADV_COMPLETE:
+    case BLE_GAP_EVENT_ADV_COMPLETE: // advertising finished
         ESP_LOGI(TAG, "ADV complete: reason=%d", event->adv_complete.reason);
         // Restart if not connected
         if (conn_handle == BLE_HS_CONN_HANDLE_NONE) {
@@ -150,7 +156,7 @@ static int ble_gap_event(struct ble_gap_event *event, void *arg) {
         notify_client = event->subscribe.cur_notify || event->subscribe.cur_indicate;
         break;
 
-    case BLE_GAP_EVENT_NOTIFY_TX: 
+    case BLE_GAP_EVENT_NOTIFY_TX: // use notify characteristic to send data
         struct ble_gap_conn_desc desc;
         if (ble_gap_conn_find(event->notify_tx.conn_handle, &desc) == 0) {
             ESP_LOGI(TAG,
@@ -193,7 +199,7 @@ static int ble_gap_event(struct ble_gap_event *event, void *arg) {
     return 0;
 }
 
-// Define the BLE connection
+// Defines the advertisement payload and starts advertising for connection discoverability 
 void ble_app_advertise(void) {
     struct ble_hs_adv_fields fields;
     struct ble_hs_adv_fields rsp_fields;
@@ -235,7 +241,7 @@ bool ble_notify_ready(void) {
 // The application
 void ble_app_on_sync(void) {
     // Get a valid BLE address type
-    int rc = ble_hs_id_infer_auto(0, &ble_addr_type);
+    int rc = ble_hs_id_infer_auto(0, &ble_addr_type); // return code (rc) from NimBLE. 0 means successful.
     if (rc != 0) {
         ESP_LOGE("BLE", "ble_hs_id_infer_auto failed: %d", rc);
         return;
@@ -247,7 +253,7 @@ void ble_app_on_sync(void) {
         ESP_LOGE("BLE", "Failed to set device name: %d", rc);
     }
 
-    // Now that everything is synced, advertise
+    // Everything is synced, advertise
     ble_app_advertise();
 }
 
@@ -256,48 +262,21 @@ void host_task(void *param) {
     nimble_port_run(); // This function will return only when nimble_port_stop() is executed
 }
 
-// void app_main()
-// {
-//     #if !CONFIG_BT_NIMBLE_ENABLED
-//         #error "NimBLE must be enabled in sdkconfig!"
-//     #endif
-
-//     nvs_flash_init();                          // 1 - Initialize NVS flash using
-//     nimble_port_init();                        // 3 - Initialize the host stack
-//     ble_svc_gap_device_name_set("BLE-Server"); // 4 - Initialize NimBLE configuration - server name
-//     ble_svc_gap_init();                        // 4 - Initialize NimBLE configuration - gap service
-//     ble_svc_gatt_init();                       // 4 - Initialize NimBLE configuration - gatt service
-//     ble_gatts_count_cfg(gatt_svcs);            // 4 - Initialize NimBLE configuration - config gatt services
-//     ble_gatts_add_svcs(gatt_svcs);             // 4 - Initialize NimBLE configuration - queues gatt services.
-//     ble_hs_cfg.sync_cb = ble_app_on_sync;      // 5 - Initialize application
-//     nimble_port_freertos_init(host_task);      // 6 - Run the thread
-// }
-
-// Pick a max elements constant used consistently across BLE code
-#ifndef BLE_FSR_MAX_ELEMS
-#define BLE_FSR_MAX_ELEMS  16   // or NUM_FSRS, but keep it >= max n you’ll send
-#endif
-
-typedef struct {
-    size_t  len;                                          // payload length in bytes
-    uint8_t bytes[BLE_FSR_MAX_ELEMS * sizeof(int)];       // storage
-} fsr_payload_t;
-
-
-bool ble_send_fsr_sample(const int *data, size_t n)
-{
+bool ble_send_fsr_sample(const int *data, size_t n) {
 
     if (!s_fsr_q || !data || n == 0 || n > BLE_FSR_MAX_ELEMS) {
         return false;
     }
 
+    // Code for FSR buffer of size > 1
     // fsr_payload_t p;
     // p.len = n * sizeof(int);
     // memcpy(p.bytes, data, p.len);
-
     // BaseType_t sent = xQueueSend(s_fsr_q, &p, 0);
     // return sent == pdTRUE;
 
+
+    // Code for FSR buffer of size 1
     fsr_payload_t p;
     p.len = n * sizeof(int32_t);
     memcpy(p.bytes, data, p.len);
@@ -306,83 +285,39 @@ bool ble_send_fsr_sample(const int *data, size_t n)
 
 
 void ble_notify_task(void *param) {
-    //float fsr_data[NUM_FSRS] = {2};
+    
     fsr_payload_t p;
 
-    while(1)
-    {
-        if (conn_handle != BLE_HS_CONN_HANDLE_NONE && sensor_data_handle != 0 && notify_client)
-        {
+    while(1) {
+        if (conn_handle != BLE_HS_CONN_HANDLE_NONE && sensor_data_handle != 0 && notify_client) {
             
            if (xQueueReceive(s_fsr_q, &p, portMAX_DELAY) != pdTRUE) continue;
 
             // Create mbuf to hold data
             struct os_mbuf *om = ble_hs_mbuf_from_flat(p.bytes, p.len);
             
-            if (om != NULL)
-            {
+            if (om != NULL) {
                 int rc = ble_gatts_notify_custom(conn_handle, sensor_data_handle, om);
-                if (rc == 0)
-                {
-                    //ESP_LOGI(TAG, "Notification sent: [%.1f", fsr_data[0]);
-                    ESP_LOGI(TAG, "Notification sent: [%.1f", 2.0);
+                if (rc == 0) {
                     int first = 0;
                     if (p.len >= sizeof(int)) memcpy(&first, p.bytes, sizeof(int));
                         ESP_LOGI(TAG, "Notify queued: attr=0x%04x bytes=%u first=%d", sensor_data_handle, (unsigned)p.len, first);
                     }
-                else
-                {
+                else {
                     ESP_LOGE(TAG, "Error sending notification: %d", rc);
                 }
             }
-            else
-            {
+            else {
                 ESP_LOGE(TAG, "Failed to allocate mbuf");
             }
         }
-        else
-        {
+        else {
             ESP_LOGW(TAG, "No active connection, waiting...");
         }
         
         vTaskDelay(pdMS_TO_TICKS(500));  // Send every 500ms (adjust as needed)
     }
 }
-
-// void ble_notify_task(void *param)
-// {
-//     fsr_payload_t p;
-//     ESP_LOGI(TAG, "notify task started; q=%p", (void*)s_fsr_q);
-
-//     for (;;) {
-//         if (conn_handle == BLE_HS_CONN_HANDLE_NONE || sensor_data_handle == 0 || !notify_client) {
-//             ESP_LOGD(TAG, "not ready: conn=%d handle=0x%04x sub=%d qwait=%u",
-//                      conn_handle, sensor_data_handle, notify_client,
-//                      (unsigned)uxQueueMessagesWaiting(s_fsr_q));
-//             vTaskDelay(pdMS_TO_TICKS(100));
-//             continue;
-//         }
-
-//         //TODO: Issue here bc nothing added to queue
-//         if (xQueueReceive(s_fsr_q, &p, pdMS_TO_TICKS(1000)) != pdTRUE) {
-//             ESP_LOGW(TAG, "no packet in 1s; qwait=%u", (unsigned)uxQueueMessagesWaiting(s_fsr_q));
-//             continue;
-//         }
-
-//         struct os_mbuf *om = ble_hs_mbuf_from_flat(p.bytes, p.len);
-//         if (!om) { ESP_LOGE(TAG, "mbuf alloc failed"); continue; }
-
-//         int rc = ble_gatts_notify_custom(conn_handle, sensor_data_handle, om);
-//         if (rc == 0) {
-//             int first = 0; if (p.len >= (int)sizeof(int)) memcpy(&first, p.bytes, sizeof(int));
-//             ESP_LOGI(TAG, "Notify queued: attr=0x%04x bytes=%u first=%d",
-//                      sensor_data_handle, (unsigned)p.len, first);
-//         } else {
-//             ESP_LOGE(TAG, "Notify failed rc=%d", rc);
-//             // os_mbuf_free_chain(om); // only if stack didn't consume on error
-//         }
-//     }
-// }
 
 void ble_init() {
     esp_err_t ret;
@@ -407,30 +342,6 @@ void ble_init() {
     //     return;
     // }
 
-    // // Check controller status
-    // esp_bt_controller_status_t status = esp_bt_controller_get_status();
-    // ESP_LOGI(TAG, "BT controller status before init: %d", status);
-    // if (status == ESP_BT_CONTROLLER_STATUS_IDLE) {
-    //     // Initialize controller
-    //     esp_bt_controller_config_t bt_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();
-    //     ret = esp_bt_controller_init(&bt_cfg);
-    //     if (ret != ESP_OK) {
-    //         ESP_LOGE(TAG, "Bluetooth controller initialization failed: %s", esp_err_to_name(ret));
-    //         return;
-    //     }
-    // } else {
-    //     ESP_LOGW(TAG, "Bluetooth controller already initialized or in unexpected state: %d", status);
-    // }
-
-    // // Enable controller
-    // ret = esp_bt_controller_enable(ESP_BT_MODE_BLE);
-    // if (ret != ESP_OK) {
-    //     ESP_LOGE(TAG, "Bluetooth controller enable failed: %s", esp_err_to_name(ret));
-    //     return;
-    // }
-    
-    //ESP_ERROR_CHECK(esp_nimble_hci_and_controller_init());
-
     // Initialize NimBLE
     ret = nimble_port_init();
     if (ret != ESP_OK) {
@@ -453,7 +364,6 @@ void ble_init() {
     if (rc != 0) {
         ESP_LOGE(TAG, "Failed to count GATT services: %d", rc);
     }
-
     rc = ble_gatts_add_svcs(gatt_svcs);
     if (rc != 0) {
         ESP_LOGE(TAG, "Failed to add GATT services: %d", rc);
