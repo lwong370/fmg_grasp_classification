@@ -51,108 +51,6 @@ std::map<int, std::string> label_map = {
     {9, "WR"}
 };
 
-// FSR CODE
-// void read_fsr_task(void *pvParameter) {
-//     int log_counter = 0;
-//     const int log_interval = 100;
-    
-//     // --- Initialize ADC handle and configuration for ADC one-shot mode ---
-//     adc_oneshot_unit_handle_t adc1_handle;
-//     adc_oneshot_unit_init_cfg_t init_config = {
-//         .unit_id = ADC_UNIT_1,
-//         .clk_src = ADC_RTC_CLK_SRC_DEFAULT,  // Default clock source
-//         .ulp_mode = ADC_ULP_MODE_DISABLE    // No ULP mode
-//     };
-//     adc_oneshot_new_unit(&init_config, &adc1_handle);
-
-//     // Configure the ADC channels for the FSR sensor pins
-//     // for (int i = 0; i < NUM_FSRS; i++) {
-//         int i = 0;
-//         adc_oneshot_chan_cfg_t channel_config = {
-//             .atten = ADC_ATTEN_DB_12,  // 12dB attenuation (0-3.3V range)
-//             .bitwidth = ADC_BITWIDTH_DEFAULT   // 12-bit resolution
-//         };
-//         esp_err_t err = adc_oneshot_config_channel(adc1_handle, fsr_pins[i], &channel_config);
-//         if (err != ESP_OK) {
-//             printf("Failed to configure ADC channel %d: %d\n", fsr_pins[i], err);
-//             adc_oneshot_del_unit(adc1_handle);  // Cleanup before exiting
-//             vTaskDelete(NULL);
-//         }
-//     // }
-
-//     // --- Circular buffer for each FSR Channel ---
-//     // Holds the last sample of size WINDOW_SIZE for each FSR sensor
-//     int signal_buffer[NUM_FSRS][WINDOW_SIZE] = {0};
-    
-//     // Index to store next sample in circular buffer
-//     int buffer_index = 0;
-
-//     // Counts number of samples since last window extraction
-//     int sample_counter = 0;
-
-//     TickType_t last_wake_time = xTaskGetTickCount();
-
-//     while (1) {  
-//         // Read a new sample from each FSR      
-//         for (int i = 0; i < NUM_FSRS; i++) {
-//             // int i = 7;
-//             int raw_value;
-//             esp_err_t err = adc_oneshot_read(adc1_handle, fsr_pins[i], &raw_value);
-//             if (err == ESP_OK) {
-                
-//                 // Delay logging so it's readable
-//                 // if (log_counter == 0) {
-//                     printf("TEST FSR%d: %d\n", i, raw_value);  // Print one FSR reading per line
-//                 // }
-//                 log_counter = (log_counter + 1) % log_interval;
-
-//                 // Write new sample in circular buffer
-//                 signal_buffer[i][buffer_index] = raw_value;
-//             } else {
-//                 printf("FSR%d: ADC Read Failed (%d)\n", i, err);
-//             }
-//         }
-
-//         printf("-----------\n");
-        
-//         // Update buffer index and add 1 to counter
-//         buffer_index = (buffer_index + 1) % WINDOW_SIZE;
-//         sample_counter++;
-
-//         // Check if it's time to extract a new window (after 50 ms worth of data)
-//         if (sample_counter >= STEP_SIZE) {
-//             sample_counter = 0;
-            
-//             // To store a vector of all channels at a certain time period
-//             Window window;
-            
-//             // Build full window of recent samples for each FSR channel
-//             for (int ch = 0; ch < NUM_FSRS; ch++) {
-                
-//                 // To store a vector of one channel
-//                 std::vector<int> channel;
-                
-//                 for (int i = 0; i < WINDOW_SIZE; i++) {
-//                     // Define idx as the "read index", accouting for circular buffer wrap-around
-//                     int idx = (buffer_index + i) % WINDOW_SIZE;
-//                     channel.push_back(signal_buffer[ch][idx]);
-//                 }
-                
-//                 // Add one full channel to the window vector
-//                 window.push_back(channel);
-//             }
-            
-//             // // Extract MAV features from window and send to prediction queue
-//             // MAVFeature features = extract_mav_feature_from_window(window);
-//             // xQueueSend(feature_queue, &features, portMAX_DELAY);
-//         }
-//         // vTaskDelayUntil(&last_wake_time, pdMS_TO_TICKS(SAMPLE_RATE_MS));
-//         vTaskDelay(pdMS_TO_TICKS(500));
-//     }
-//     adc_oneshot_del_unit(adc1_handle);
-//     vTaskDelete(NULL);
-// }
-
 void read_fsr_task(void *pvParameter) {
     int log_counter = 0;
     const int log_interval = 100;
@@ -188,7 +86,6 @@ void read_fsr_task(void *pvParameter) {
 
     //int (*signal_buffer)[WINDOW_SIZE] = (int(*)[WINDOW_SIZE])heap_caps_calloc(NUM_FSRS, sizeof(*signal_buffer), MALLOC_CAP_DEFAULT);
     //assert(signal_buffer);
-
     
     // Index to store next sample in circular buffer
     int buffer_index = 0;
@@ -236,96 +133,13 @@ void read_fsr_task(void *pvParameter) {
         }
         
         log_counter = (log_counter + 1) % log_interval;
- 
-        // for (int i = 0; i < NUM_FSRS; i++) {
-        //     // int i = 7;
-        //     int raw_value = 0;
-        //     esp_err_t err = adc_oneshot_read(adc1_handle, fsr_pins[i], &raw_value);
-        //     if (err == ESP_OK) {
-                
-        //         // Delay logging so it's readable
-        //         // if (log_counter == 0) {
-        //             printf("FSR%d: %d\n", i, raw_value);  // Print one FSR reading per line
-        //         // }
-        //         ble_send_fsr_sample(raw_value, NUM_FSRS);
 
-        //         // log_counter = (log_counter + 1) % log_interval;
-
-        //         fsr_values[i] = raw_value; 
-
-        //         // Write new sample in circular buffer
-        //         signal_buffer[i][buffer_index] = raw_value;
-        //     } else {
-        //         printf("FSR%d: ADC Read Failed (%d)\n", i, err);
-        //         fsr_values[i] = 0;
-        //     }
-        // }
-
-        // printf("-----------\n");
-
-        // // Send one notification containing all channels
-        // ble_send_fsr_sample(fsr_values, NUM_FSRS);
-
-        // // housekeeping
-        // log_counter = (log_counter + 1) % log_interval;
-        
-        // Update buffer index and add 1 to counter
-        // buffer_index = (buffer_index + 1) % WINDOW_SIZE;
-        // sample_counter++;
-
-        // // Check if it's time to extract a new window (after 50 ms worth of data)
-        // if (sample_counter >= STEP_SIZE) {
-        //     sample_counter = 0;
-            
-        //     // To store a vector of all channels at a certain time period
-        //     Window window;
-            
-        //     // Build full window of recent samples for each FSR channel
-        //     for (int ch = 0; ch < NUM_FSRS; ch++) {
-                
-        //         // To store a vector of one channel
-        //         std::vector<int> channel;
-                
-        //         for (int i = 0; i < WINDOW_SIZE; i++) {
-        //             // Define idx as the "read index", accouting for circular buffer wrap-around
-        //             int idx = (buffer_index + i) % WINDOW_SIZE;
-        //             channel.push_back(signal_buffer[ch][idx]);
-        //         }
-                
-        //         // Add one full channel to the window vector
-        //         window.push_back(channel);
-        //     }
-            
-            // // Extract MAV features from window and send to prediction queue
-            // MAVFeature features = extract_mav_feature_from_window(window);
-            // xQueueSend(feature_queue, &features, portMAX_DELAY);
         }
         // vTaskDelayUntil(&last_wake_time, pdMS_TO_TICKS(SAMPLE_RATE_MS));
         vTaskDelay(pdMS_TO_TICKS(1000));
-    //}
+    
     adc_oneshot_del_unit(adc1_handle);
     vTaskDelete(NULL);
-}
-
-void predict_task(void *pvParameter) {
-    while (1) {
-        MAVFeature received_features;
-        if (xQueueReceive(feature_queue, &received_features, portMAX_DELAY) == pdTRUE) {
-            if (received_features.size() == NUM_FEATURES) {
-                double input_vector[NUM_FEATURES];
-                double input_scaled[NUM_FEATURES];
-
-                for (int i = 0; i < NUM_FEATURES; i++)
-                    input_vector[i] = static_cast<double>(received_features[i]);
-
-                normalize(input_vector, input_scaled);  // From predict.h
-                int prediction = predict(input_scaled); // From predict.h
-
-                std::string label = label_map[prediction];
-                ESP_LOGI(TAG, "Prediction: %d (%s)", prediction, label.c_str());
-            }
-        }
-    }
 }
 
 extern "C" void app_main(void) {
@@ -339,10 +153,4 @@ extern "C" void app_main(void) {
 
     // FSR CODE
     xTaskCreate(&read_fsr_task, "read_fsr_task", 4096, NULL, 5, NULL);
-    
-   // Grasp Prediction
-//    xTaskCreate(&predict_task, "predict_task", 4096, NULL, 5, NULL);
-
-    
-    // xTaskCreate(ble_notify_task, "fmg_notify", 4096, NULL, 5, NULL);
 }
