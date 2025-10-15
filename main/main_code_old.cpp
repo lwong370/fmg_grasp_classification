@@ -22,19 +22,34 @@
 #include "../components/constants/config.h"
 extern "C" {
     #include "nimble_ble.h"
+    //#include "i2c_driver.h"
+    #include "esp_err.h"
+    #include "esp_timer.h"
+    #include "esp_vfs_dev.h"
+    
+    #include "driver/usb_serial_jtag.h"
+
+    #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5,1,0)
+        #include "esp_vfs_dev.h"
+        #define USE_USB_STDIO()  esp_vfs_dev_usb_serial_jtag_use_driver()
+    #else
+        #include "esp_vfs_usb_serial_jtag.h"
+        #define USE_USB_STDIO()  esp_vfs_usb_serial_jtag_use_driver()
+    #endif
 }
 
 #define TAG "MY_APP"
 QueueHandle_t feature_queue;
+int fsr_values[NUM_FSRS];  
 
 const adc_channel_t fsr_pins[NUM_FSRS] = {
     // ADC_CHANNEL_0, 
     // ADC_CHANNEL_1, 
     // ADC_CHANNEL_2, 
     // ADC_CHANNEL_3, 
-    ADC_CHANNEL_5 
+    ADC_CHANNEL_5, 
     // ADC_CHANNEL_6, 
-    // ADC_CHANNEL_7, 
+    ADC_CHANNEL_7
     // ADC_CHANNEL_8
 };
 
@@ -54,7 +69,9 @@ std::map<int, std::string> label_map = {
 void read_fsr_task(void *pvParameter) {
     int log_counter = 0;
     const int log_interval = 100;
-    int fsr_values[NUM_FSRS];  
+    
+    const TickType_t sample_period = pdMS_TO_TICKS(20); // 50 Hz
+    TickType_t last_wake = xTaskGetTickCount();
     
     // --- Initialize ADC handle and configuration for ADC one-shot mode ---
     adc_oneshot_unit_handle_t adc1_handle;
@@ -95,9 +112,7 @@ void read_fsr_task(void *pvParameter) {
 
     //TickType_t last_wake_time = xTaskGetTickCount();
 
-    
 
-    const TickType_t sample_period = pdMS_TO_TICKS(20); // 50 Hz sampling
     int decim = 0;
 
     while (1) {  
@@ -107,7 +122,7 @@ void read_fsr_task(void *pvParameter) {
             int raw_value = 0;
             esp_err_t err = adc_oneshot_read(adc1_handle, fsr_pins[i], &raw_value);
             if (err == ESP_OK) {
-                if (++decim >= 50) {
+                if (++decim >= 25) {
                     printf("FSR%d: %d\n", i, raw_value);
                     decim = 0;
                 }
@@ -121,20 +136,22 @@ void read_fsr_task(void *pvParameter) {
 
         // printf("-----------\n");
 
-        if (ble_notify_ready()) {
-            // Send one notification containing all channels
-            bool ok = ble_send_fsr_sample(fsr_values, NUM_FSRS);  
+        // if (ble_notify_ready()) {
+        //     // Send one notification containing all channels
+        //     bool ok = ble_send_fsr_sample(fsr_values, NUM_FSRS);  
 
-            if (!ok) {
-                ESP_LOGW(TAG, "enqueue failed (queue null/full or n invalid)");
-            } else {
-                ESP_LOGW(TAG, "queued success");
-            }
-        }
+        //     if (!ok) {
+        //         ESP_LOGW(TAG, "enqueue failed (queue null/full or n invalid)");
+        //     } else {
+        //         ESP_LOGW(TAG, "queued success");
+        //     }
+        // }
+
+        vTaskDelayUntil(&last_wake, sample_period);
         
         log_counter = (log_counter + 1) % log_interval;
 
-        }
+    }
         // vTaskDelayUntil(&last_wake_time, pdMS_TO_TICKS(SAMPLE_RATE_MS));
         vTaskDelay(pdMS_TO_TICKS(1000));
     
@@ -142,15 +159,33 @@ void read_fsr_task(void *pvParameter) {
     vTaskDelete(NULL);
 }
 
+static void init_usb_stdio(void) {
+    usb_serial_jtag_driver_config_t cfg = USB_SERIAL_JTAG_DRIVER_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(usb_serial_jtag_driver_install(&cfg));
+    esp_vfs_usb_serial_jtag_use_driver();
+    setvbuf(stdout, nullptr, _IONBF, 0);  // unbuffered printf
+}
+
+
 extern "C" void app_main(void) {
-    ble_init();
+    //ble_init();
     
-    // feature_queue = xQueueCreate(FEATURE_QUEUE_LENGTH, sizeof(MAVFeature));
-    // if (feature_queue == NULL) {
-    //     ESP_LOGE(TAG, "Failed to create feature queue.");
-    //     return;
+    // Testing I2C capabilities
+    // SP_ERROR_CHECK(i2c_master_init());
+    // while (1) {
+    //     uint16_t raw;
+    //     if (mcp3221_read_raw(&raw) == ESP_OK)
+    //         ESP_LOGI("MAIN", "ADC = %u", raw);
+    //     vTaskDelay(pdMS_TO_TICKS(200));
     // }
 
-    // FSR CODE
+    // FSR CODE to run BT
     xTaskCreate(&read_fsr_task, "read_fsr_task", 4096, NULL, 5, NULL);
+
+    //Direct usb data sending
+    init_usb_stdio();
+    uint64_t t_us = esp_timer_get_time();
+
+    // Task delay
+    vTaskDelay(pdMS_TO_TICKS(1000));
 }
