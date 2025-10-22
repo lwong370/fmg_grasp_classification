@@ -2,7 +2,7 @@
 
 ## Overview
 ### Objective
-Designing an embedded wearable device for biopotential signal acquisition and wireless data transmission to a computer application for prosthetic rehabilitation applications.
+Designing an embedded wearable device as a modular application for registering biopotential signal acquisition and wireless data transmission to a computer application for prosthetic rehabilitation applications.
 
 **I will update this as I go :)
 
