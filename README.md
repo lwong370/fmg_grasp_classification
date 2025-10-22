@@ -36,7 +36,7 @@ Now, I am experimenting the TinyS3 with classification. I ported code from libli
 - **Design Decisions:**
   1. **Connect force sensors along I²C bus lines**  
      This approach ultimately eliminates extra wiring and enables modularity, allowing different sensor types to be swapped in and out of the band.  
-     Drawback is that I²C is slower than other alternatives such as SPI sensor interfaces or direct ADC pin connections. However, using I²C ensures that the number of available ADC pins on the MCU does not limit the number of sensor channels, allowing for future expansion if additional sensors are added. While adding more sensors does increase I²C bus latency (and sensor channel readings can't *technically* be read simultaneously with this set-up), the physical space constraints of the band inherently cap the number of sensors that can be placed. As a result, the latency will remain well within acceptable limits for our data acquisition requirements.
+     Drawback is that I²C is slower than other alternatives such as SPI sensor interfaces or direct ADC pin connections. However, using I²C ensures that the number of available ADC pins on the MCU does not limit the number of sensor channels, allowing for future expansion if additional sensors are added. While adding more sensors does increase I²C bus latency (longer amount of time to get data from all sensors since multiple slave devices can't *technically* be read simultaneously with this set-up), the physical space constraints of the band inherently cap the number of sensors that can be placed. As a result, the latency will remain well within acceptable limits for our data acquisition requirements.
 
 **Phase 2**: Protoboard prototype- 
 
