@@ -48,8 +48,8 @@ const adc_channel_t fsr_pins[NUM_FSRS] = {
     // ADC_CHANNEL_2, 
     // ADC_CHANNEL_3, 
     ADC_CHANNEL_5, 
-    // ADC_CHANNEL_6, 
-    ADC_CHANNEL_7
+    ADC_CHANNEL_6 
+    // ADC_CHANNEL_7
     // ADC_CHANNEL_8
 };
 
@@ -122,19 +122,19 @@ void read_fsr_task(void *pvParameter) {
             int raw_value = 0;
             esp_err_t err = adc_oneshot_read(adc1_handle, fsr_pins[i], &raw_value);
             if (err == ESP_OK) {
-                if (++decim >= 25) {
-                    printf("FSR%d: %d\n", i, raw_value);
-                    decim = 0;
-                }
                 fsr_values[i] = raw_value;                       // collect for BLE
-                signal_buffer[i][buffer_index] = raw_value;      // ring buffer
+                signal_buffer[i][buffer_index] = raw_value;      // ring buffer   
             } else {
                 printf("FSR%d: ADC Read Failed (%d)\n", i, err);
                 fsr_values[i] = 0;                               // keep packet defined
             }
         }
 
-        // printf("-----------\n");
+        // Print FSR readings to console
+        if (++decim >= 25) {
+            printf("%d, %d\n", fsr_values[0], fsr_values[1]);
+            decim = 0;
+        }
 
         // if (ble_notify_ready()) {
         //     // Send one notification containing all channels
