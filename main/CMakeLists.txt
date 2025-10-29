@@ -1,7 +1,7 @@
 idf_component_register(SRCS "main_code_old.cpp" "../liblinear/linear.cpp" "../components/feature_extraction/feature_extraction.cpp" "../components/predictor/predict.cpp" 
                             "../components/bluetooth/nimble_ble.c"                        
-                       INCLUDE_DIRS "." "../liblinear"
-                       PRIV_REQUIRES predictor feature_extraction bluetooth driver esp_adc main)
+                       INCLUDE_DIRS "." "../liblinear" 
+                       PRIV_REQUIRES predictor feature_extraction bluetooth driver esp_adc i2c_driver main)
 
 set(CMAKE_CXX_STANDARD 17)
 target_compile_options(${COMPONENT_LIB} PRIVATE -std=gnu++17)

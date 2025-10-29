@@ -1,48 +1,43 @@
 #include "i2c_driver.h"
 #include "driver/i2c.h"
-#define I2C_PORT I2C_NUM_0
-#define SDA_PIN 8
-#define SCL_PIN 9
-#define MCP3221_ADDR 0x4D
+#include "esp_check.h"      
 
-void i2cScan() {
-  Serial.println("Scanning...");
-  for (uint8_t addr = 1; addr < 127; addr++) {
-    Wire.beginTransmission(addr);
-    uint8_t err = Wire.endTransmission();
-    if (err == 0) {
-      Serial.print("Found 0x"); Serial.println(addr, HEX);
-    }
-  }
+esp_err_t i2c_master_init(void) {
+    i2c_config_t cfg = {
+        .mode = I2C_MODE_MASTER,
+        .sda_io_num = SDA_PIN,
+        .scl_io_num = SCL_PIN,
+        .sda_pullup_en = GPIO_PULLUP_DISABLE, // use breakout pull-ups (recommended)
+        .scl_pullup_en = GPIO_PULLUP_DISABLE,
+        .master.clk_speed = I2C_FREQ_HZ,
+        .clk_flags = 0
+    };
+    ESP_RETURN_ON_ERROR(i2c_param_config(I2C_PORT, &cfg), "I2C", "param_config failed");
+    ESP_RETURN_ON_ERROR(i2c_driver_install(I2C_PORT, cfg.mode, 0, 0, 0), "I2C", "driver_install failed");
+    return ESP_OK;
 }
 
-bool mcp3221Read(uint16_t &code) {
-  Wire.requestFrom(MCP3221_ADDR, 2);
-  if (Wire.available() < 2) return false;
-  uint8_t msb = Wire.read();
-  uint8_t lsb = Wire.read();
-  uint16_t raw = ((uint16_t)msb << 8) | lsb;
-  raw >>= 4;                 // 12-bit right-aligned
-  code = raw & 0x0FFF;
-  return true;
+esp_err_t mcp3221_read_raw(uint8_t addr, uint16_t *out) {
+    if (!out) return ESP_ERR_INVALID_ARG;
+
+    // MCP3221 is read-only: request 2 bytes
+    uint8_t rx[2] = {0};
+    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+    i2c_master_start(cmd);
+    // 7-bit addr -> on-wire {addr, R=1}
+    i2c_master_write_byte(cmd, (addr << 1) | I2C_MASTER_READ, true);
+    i2c_master_read(cmd, rx, 1, I2C_MASTER_ACK);
+    i2c_master_read_byte(cmd, &rx[1], I2C_MASTER_NACK);
+    i2c_master_stop(cmd);
+    esp_err_t err = i2c_master_cmd_begin(I2C_PORT, cmd, pdMS_TO_TICKS(50));
+    i2c_cmd_link_delete(cmd);
+    if (err != ESP_OK) return err;
+
+    // 12-bit right-aligned across two bytes: [MSB D11..D4], [LSB D3..D0 | xxxx]
+    uint16_t raw = ((uint16_t)rx[0] << 8) | rx[1];
+    raw >>= 4;
+    *out = raw & 0x0FFF;
+    return ESP_OK;
 }
 
-void setup() {
-  Serial.begin(115200);
-  // For ESP32, you can pass custom pins:
-  Wire.begin(SDA_PIN, SCL_PIN, 400000); // 400 kHz
-  delay(100);
-  i2cScan();
-}
 
-void loop() {
-  uint16_t code;
-  if (mcp3221Read(code)) {
-    float volts = (code / 4095.0f) * 3.3f;
-    Serial.print("MCP3221: code="); Serial.print(code);
-    Serial.print("  V="); Serial.println(volts, 3);
-  } else {
-    Serial.println("MCP3221 read failed");
-  }
-  delay(200);
-}

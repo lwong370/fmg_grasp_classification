@@ -17,16 +17,17 @@
 // #include "../src/fsr_reader.h"
 // #include "driver/adc.h"  
 #include "predict.h"
+#include "driver/i2c.h"
+#include "i2c_driver.h"
 #include "../components/constants/types.h"
 #include "../components/feature_extraction/feature_extraction.h"
 #include "../components/constants/config.h"
-extern "C" {
+
+extern "C" { 
     #include "nimble_ble.h"
-    //#include "i2c_driver.h"
     #include "esp_err.h"
     #include "esp_timer.h"
-    #include "esp_vfs_dev.h"
-    
+    #include "esp_vfs_dev.h" 
     #include "driver/usb_serial_jtag.h"
 
     #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5,1,0)
@@ -43,27 +44,20 @@ QueueHandle_t feature_queue;
 int fsr_values[NUM_FSRS];  
 
 const adc_channel_t fsr_pins[NUM_FSRS] = {
-    // ADC_CHANNEL_0, 
-    // ADC_CHANNEL_1, 
-    // ADC_CHANNEL_2, 
+    //ADC_CHANNEL_0, 
+    ADC_CHANNEL_1, 
+    ADC_CHANNEL_2
     // ADC_CHANNEL_3, 
-    ADC_CHANNEL_5, 
-    ADC_CHANNEL_6 
+    // ADC_CHANNEL_5, 
+    // ADC_CHANNEL_6 
     // ADC_CHANNEL_7
     // ADC_CHANNEL_8
 };
 
-std::map<int, std::string> label_map = {
-    {0, "CR"},
-    {1, "CW"},
-    {2, "IF"},
-    {3, "IP"},
-    {4, "KP"},
-    {5, "PP"},
-    {6, "TP"},
-    {7, "WE"},
-    {8, "WF"},
-    {9, "WR"}
+static const uint8_t MCP_ADDRS[] = {
+    MCP3221_ADDR1
+    //MCP3221_ADDR2, MCP3221_ADDR3, MCP3221_ADDR4,
+    //MCP3221_ADDR5, MCP3221_ADDR6, MCP3221_ADDR7, MCP3221_ADDR8
 };
 
 void read_fsr_task(void *pvParameter) {
@@ -111,7 +105,6 @@ void read_fsr_task(void *pvParameter) {
     int sample_counter = 0;
 
     //TickType_t last_wake_time = xTaskGetTickCount();
-
 
     int decim = 0;
 
@@ -166,16 +159,43 @@ static void init_usb_stdio(void) {
     setvbuf(stdout, nullptr, _IONBF, 0);  // unbuffered printf
 }
 
+void i2c_scan() {
+    int found = 0;
+    for (uint8_t addr = 1; addr < 127; ++addr) { // I2C addresses are 7-bits
+        i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+        i2c_master_start(cmd);
+        i2c_master_write_byte(cmd, (addr << 1) | I2C_MASTER_WRITE, true); // Shifts address to left by 1 bit, making room for R/W bit
+        i2c_master_stop(cmd);
+        esp_err_t err = i2c_master_cmd_begin(I2C_PORT, cmd, pdMS_TO_TICKS(50));
+        i2c_cmd_link_delete(cmd);
+        if (err == ESP_OK) { ESP_LOGI("SCAN", "Found @ 0x%02X", addr); found++; } // Check and logs if ACK sent back
+    }
+    ESP_LOGI("SCAN", "Found %d device(s).", found);
+}
+
+static inline float code_to_volts(uint16_t code, float vref) {
+    return (code / 4095.0f) * vref;
+}
 
 extern "C" void app_main(void) {
     //ble_init();
     
     // Testing I2C capabilities
-    // SP_ERROR_CHECK(i2c_master_init());
+    // ESP_ERROR_CHECK(i2c_master_init());
+    // i2c_scan();
+    // const float VREF = 3.3f;  // change if your MCP3221 VDD differs
     // while (1) {
-    //     uint16_t raw;
-    //     if (mcp3221_read_raw(&raw) == ESP_OK)
-    //         ESP_LOGI("MAIN", "ADC = %u", raw);
+    //     for (size_t i = 0; i < sizeof(MCP_ADDRS); ++i) {
+    //         const uint8_t addr = MCP_ADDRS[i];
+    //         uint16_t code = 0;
+    //         esp_err_t e = mcp3221_read_raw(addr, &code);
+    //         if (e == ESP_OK) {
+    //             float v = code_to_volts(code, VREF);
+    //             ESP_LOGI(TAG, "MCP3221[0x%02X] code=%4u  V=%.3f", addr, code, v);
+    //         } else {
+    //             ESP_LOGW(TAG, "Read fail @ 0x%02X: %s", addr, esp_err_to_name(e));
+    //         }
+    //     }
     //     vTaskDelay(pdMS_TO_TICKS(200));
     // }
 
@@ -183,8 +203,8 @@ extern "C" void app_main(void) {
     xTaskCreate(&read_fsr_task, "read_fsr_task", 4096, NULL, 5, NULL);
 
     //Direct usb data sending
-    init_usb_stdio();
-    uint64_t t_us = esp_timer_get_time();
+    //init_usb_stdio();
+    //uint64_t t_us = esp_timer_get_time();
 
     // Task delay
     vTaskDelay(pdMS_TO_TICKS(1000));
