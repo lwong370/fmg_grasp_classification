@@ -45,7 +45,7 @@ int fsr_values[NUM_FSRS];
 
 const adc_channel_t fsr_pins[NUM_FSRS] = {
     //ADC_CHANNEL_0, 
-    ADC_CHANNEL_1, 
+    // ADC_CHANNEL_1, 
     ADC_CHANNEL_2
     // ADC_CHANNEL_3, 
     // ADC_CHANNEL_5, 
@@ -125,20 +125,21 @@ void read_fsr_task(void *pvParameter) {
 
         // Print FSR readings to console
         if (++decim >= 25) {
-            printf("%d, %d\n", fsr_values[0], fsr_values[1]);
+            printf("%d\n", fsr_values[0]);
+            //printf("%d, %d\n", fsr_values[0], fsr_values[1]);
             decim = 0;
         }
 
-        // if (ble_notify_ready()) {
-        //     // Send one notification containing all channels
-        //     bool ok = ble_send_fsr_sample(fsr_values, NUM_FSRS);  
+        if (ble_notify_ready()) {
+            // Send one notification containing all channels
+            bool ok = ble_send_fsr_sample(fsr_values, NUM_FSRS);  
 
-        //     if (!ok) {
-        //         ESP_LOGW(TAG, "enqueue failed (queue null/full or n invalid)");
-        //     } else {
-        //         ESP_LOGW(TAG, "queued success");
-        //     }
-        // }
+            // if (!ok) {
+            //     ESP_LOGW(TAG, "enqueue failed (queue null/full or n invalid)");
+            // } else {
+            //     ESP_LOGW(TAG, "queued success");
+            // }
+        }
 
         vTaskDelayUntil(&last_wake, sample_period);
         
@@ -146,7 +147,7 @@ void read_fsr_task(void *pvParameter) {
 
     }
         // vTaskDelayUntil(&last_wake_time, pdMS_TO_TICKS(SAMPLE_RATE_MS));
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        vTaskDelay(pdMS_TO_TICKS(00));
     
     adc_oneshot_del_unit(adc1_handle);
     vTaskDelete(NULL);
@@ -168,7 +169,9 @@ void i2c_scan() {
         i2c_master_stop(cmd);
         esp_err_t err = i2c_master_cmd_begin(I2C_PORT, cmd, pdMS_TO_TICKS(50));
         i2c_cmd_link_delete(cmd);
-        if (err == ESP_OK) { ESP_LOGI("SCAN", "Found @ 0x%02X", addr); found++; } // Check and logs if ACK sent back
+        if (err == ESP_OK) {  // Check and logs if ACK sent back
+            ESP_LOGI("SCAN", "Found @ 0x%02X", addr); 
+            found++; } 
     }
     ESP_LOGI("SCAN", "Found %d device(s).", found);
 }
@@ -178,7 +181,7 @@ static inline float code_to_volts(uint16_t code, float vref) {
 }
 
 extern "C" void app_main(void) {
-    //ble_init();
+    ble_init();
     
     // Testing I2C capabilities
     // ESP_ERROR_CHECK(i2c_master_init());

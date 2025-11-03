@@ -315,7 +315,7 @@ void ble_notify_task(void *param) {
             ESP_LOGW(TAG, "No active connection, waiting...");
         }
         
-        vTaskDelay(pdMS_TO_TICKS(500));  // Send every 500ms (adjust as needed)
+        vTaskDelay(pdMS_TO_TICKS(10));  // Send every 500ms (adjust as needed)
     }
 }
 
