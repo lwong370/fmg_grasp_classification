@@ -21,7 +21,7 @@
 #define NOTIFY_TASK_PRIO   5
 #define FSR_QUEUE_DEPTH    1
 #ifndef BLE_FSR_MAX_ELEMS
-#define BLE_FSR_MAX_ELEMS  16   // or NUM_FSRS, but keep it >= max n you’ll send
+#define BLE_FSR_MAX_ELEMS  2   // or NUM_FSRS, but keep it >= max n you’ll send
 #endif
 
 char *TAG = "BLE-Server";
@@ -33,7 +33,7 @@ static uint16_t conn_handle = BLE_HS_CONN_HANDLE_NONE;    // active connection
 static uint16_t sensor_data_handle;                       // handle returned by GATT registration
 volatile uint8_t notify_client = 0;                       // if client subscribed to notify
 
-static QueueHandle_t s_fsr_q = NULL;                      // queue for sensor inputs
+static QueueHandle_t sensor_input_queue = NULL;                      // queue for sensor inputs
 
 void ble_app_advertise(void);
 
@@ -60,26 +60,26 @@ static const ble_uuid128_t NOTIFY_CHAR_UUID = BLE_UUID128_INIT(
     0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0x00, 0x03
 );
 
-// Write data to ESP32 
+// Callback function for writing data to ESP32 
 static int device_write(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt, void *arg) {
     printf("Data from the client: %.*s\n", ctxt->om->om_len, ctxt->om->om_data);
     return 0;
 }
 
-// Read data from ESP32 
+// Callback function for reading data from ESP32 
 static int device_read(uint16_t conn_handle, uint16_t attr_handle, struct ble_gatt_access_ctxt *ctxt, void *arg) {
     os_mbuf_append(ctxt->om, "Data from the server", strlen("Data from the server"));
     return 0;
 }
 
+// Callback function for obtaining sensor data 
 static int fsr_read_cb(uint16_t ch, uint16_t ah, struct ble_gatt_access_ctxt *ctxt, void *arg){
     // put latest cached bytes here
     const char *msg = "last FSR value here";
     return os_mbuf_append(ctxt->om, msg, strlen(msg)) == 0 ? 0 : BLE_ATT_ERR_INSUFFICIENT_RES;
 }
 
-// Array of pointers to other service definitions
-// UUID - Universal Unique Identifier
+// Define GATT
 static const struct ble_gatt_svc_def gatt_svcs[] = {
     {.type = BLE_GATT_SVC_TYPE_PRIMARY,
      .uuid = &SERVICE_UUID.u,
@@ -264,23 +264,23 @@ void host_task(void *param) {
 
 bool ble_send_fsr_sample(const int *data, size_t n) {
 
-    if (!s_fsr_q || !data || n == 0 || n > BLE_FSR_MAX_ELEMS) {
+    if (!sensor_input_queue || !data || n == 0 || n > BLE_FSR_MAX_ELEMS) {
         return false;
     }
 
     // Code for FSR buffer of size > 1
-    // fsr_payload_t p;
-    // p.len = n * sizeof(int);
-    // memcpy(p.bytes, data, p.len);
-    // BaseType_t sent = xQueueSend(s_fsr_q, &p, 0);
-    // return sent == pdTRUE;
+    fsr_payload_t p;
+    p.len = n * sizeof(int);
+    memcpy(p.bytes, data, p.len);
+    BaseType_t sent = xQueueSend(sensor_input_queue, &p, 0);
+    return sent == pdTRUE;
 
 
     // Code for FSR buffer of size 1
-    fsr_payload_t p;
-    p.len = n * sizeof(int32_t);
-    memcpy(p.bytes, data, p.len);
-    return xQueueOverwrite(s_fsr_q, &p) == pdTRUE;
+    // fsr_payload_t p;
+    // p.len = n * sizeof(int32_t);
+    // memcpy(p.bytes, data, p.len);
+    // return xQueueOverwrite(sensor_input_queue, &p) == pdTRUE;
 }
 
 
@@ -291,7 +291,7 @@ void ble_notify_task(void *param) {
     while(1) {
         if (conn_handle != BLE_HS_CONN_HANDLE_NONE && sensor_data_handle != 0 && notify_client) {
             
-           if (xQueueReceive(s_fsr_q, &p, portMAX_DELAY) != pdTRUE) continue;
+           if (xQueueReceive(sensor_input_queue, &p, portMAX_DELAY) != pdTRUE) continue;
 
             // Create mbuf to hold data
             struct os_mbuf *om = ble_hs_mbuf_from_flat(p.bytes, p.len);
@@ -323,11 +323,11 @@ void ble_init() {
     esp_err_t ret;
     esp_log_level_set(TAG, ESP_LOG_DEBUG);
 
-    if (!s_fsr_q) s_fsr_q = xQueueCreate(FSR_QUEUE_DEPTH, sizeof(fsr_payload_t));
-    ESP_LOGI(TAG, "FSR queue created: %p (item=%u bytes)", (void*)s_fsr_q, (unsigned)sizeof(fsr_payload_t));
-    xTaskCreate(ble_notify_task, "ble_notify_task", 4096, NULL, 6, NULL); // prio > sensor
+    if (!sensor_input_queue) sensor_input_queue = xQueueCreate(FSR_QUEUE_DEPTH, sizeof(fsr_payload_t));
+    ESP_LOGI(TAG, "FSR queue created: %p (item=%u bytes)", (void*)sensor_input_queue, (unsigned)sizeof(fsr_payload_t));
+    xTaskCreate(ble_notify_task, "ble_notify_task", 4096, NULL, 6, NULL); 
 
-    // Initialize NVS
+    // Initialize Non-volatile storage
     ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         ESP_ERROR_CHECK(nvs_flash_erase());

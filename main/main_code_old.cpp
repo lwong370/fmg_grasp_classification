@@ -45,7 +45,7 @@ int fsr_values[NUM_FSRS];
 
 const adc_channel_t fsr_pins[NUM_FSRS] = {
     //ADC_CHANNEL_0, 
-    // ADC_CHANNEL_1, 
+    ADC_CHANNEL_1, 
     ADC_CHANNEL_2
     // ADC_CHANNEL_3, 
     // ADC_CHANNEL_5, 
