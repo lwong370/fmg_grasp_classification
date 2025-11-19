@@ -46,8 +46,8 @@ int fsr_values[NUM_FSRS];
 const adc_channel_t fsr_pins[NUM_FSRS] = {
     //ADC_CHANNEL_0, 
     ADC_CHANNEL_1, 
-    ADC_CHANNEL_2
-    // ADC_CHANNEL_3, 
+    ADC_CHANNEL_2,
+    ADC_CHANNEL_3
     // ADC_CHANNEL_5, 
     // ADC_CHANNEL_6 
     // ADC_CHANNEL_7
@@ -55,16 +55,14 @@ const adc_channel_t fsr_pins[NUM_FSRS] = {
 };
 
 static const uint8_t MCP_ADDRS[] = {
-    MCP3221_ADDR1
-    //MCP3221_ADDR2, MCP3221_ADDR3, MCP3221_ADDR4,
-    //MCP3221_ADDR5, MCP3221_ADDR6, MCP3221_ADDR7, MCP3221_ADDR8
+    MCP3221_ADDR1, ADC_ADDR1, ADC_ADDR2
 };
 
 void read_fsr_task(void *pvParameter) {
     int log_counter = 0;
     const int log_interval = 100;
     
-    const TickType_t sample_period = pdMS_TO_TICKS(20); // 50 Hz
+    const TickType_t sample_period = pdMS_TO_TICKS(20); // 50 Hz loop period 
     TickType_t last_wake = xTaskGetTickCount();
     
     // --- Initialize ADC handle and configuration for ADC one-shot mode ---
@@ -121,12 +119,14 @@ void read_fsr_task(void *pvParameter) {
                 printf("FSR%d: ADC Read Failed (%d)\n", i, err);
                 fsr_values[i] = 0;                               // keep packet defined
             }
+
+            esp_rom_delay_us(40); // slow down ADC sampling rate
         }
 
         // Print FSR readings to console
         if (++decim >= 25) {
-            printf("%d\n", fsr_values[0]);
-            //printf("%d, %d\n", fsr_values[0], fsr_values[1]);
+            //printf("%d\n", fsr_values[0]);
+            printf("%d, %d, %d\n", fsr_values[0], fsr_values[1], fsr_values[2]);
             decim = 0;
         }
 
@@ -146,8 +146,6 @@ void read_fsr_task(void *pvParameter) {
         log_counter = (log_counter + 1) % log_interval;
 
     }
-        // vTaskDelayUntil(&last_wake_time, pdMS_TO_TICKS(SAMPLE_RATE_MS));
-        vTaskDelay(pdMS_TO_TICKS(00));
     
     adc_oneshot_del_unit(adc1_handle);
     vTaskDelete(NULL);
@@ -178,32 +176,33 @@ void i2c_scan() {
 
 static inline float code_to_volts(uint16_t code, float vref) {
     return (code / 4095.0f) * vref;
+   //return code;
 }
 
 extern "C" void app_main(void) {
     ble_init();
     
     // Testing I2C capabilities
-    // ESP_ERROR_CHECK(i2c_master_init());
-    // i2c_scan();
-    // const float VREF = 3.3f;  // change if your MCP3221 VDD differs
-    // while (1) {
-    //     for (size_t i = 0; i < sizeof(MCP_ADDRS); ++i) {
-    //         const uint8_t addr = MCP_ADDRS[i];
-    //         uint16_t code = 0;
-    //         esp_err_t e = mcp3221_read_raw(addr, &code);
-    //         if (e == ESP_OK) {
-    //             float v = code_to_volts(code, VREF);
-    //             ESP_LOGI(TAG, "MCP3221[0x%02X] code=%4u  V=%.3f", addr, code, v);
-    //         } else {
-    //             ESP_LOGW(TAG, "Read fail @ 0x%02X: %s", addr, esp_err_to_name(e));
-    //         }
-    //     }
-    //     vTaskDelay(pdMS_TO_TICKS(200));
-    // }
+    ESP_ERROR_CHECK(i2c_master_init());
+    i2c_scan();
+    const float VREF = 3.3f;  // change if your MCP3221 VDD differs
+    while (1) {
+        for (size_t i = 0; i < sizeof(MCP_ADDRS); ++i) {
+            const uint8_t addr = MCP_ADDRS[i];
+            uint16_t code = 0;
+            esp_err_t e = mcp3221_read_raw(addr, &code);
+            if (e == ESP_OK) {
+                float v = code_to_volts(code, VREF);
+                ESP_LOGI(TAG, "MCP3221[0x%02X] code=%4u  V=%.3f", addr, code, v);
+            } else {
+                ESP_LOGW(TAG, "Read fail @ 0x%02X: %s", addr, esp_err_to_name(e));
+            }
+        }
+        vTaskDelay(pdMS_TO_TICKS(200));
+    }
 
-    // FSR CODE to run BT
-    xTaskCreate(&read_fsr_task, "read_fsr_task", 4096, NULL, 5, NULL);
+    // FSR CODE to read analog pins and run BT
+    //xTaskCreate(&read_fsr_task, "read_fsr_task", 4096, NULL, 5, NULL);
 
     //Direct usb data sending
     //init_usb_stdio();

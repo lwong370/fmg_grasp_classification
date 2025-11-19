@@ -20,23 +20,23 @@ esp_err_t i2c_master_init(void) {
 esp_err_t mcp3221_read_raw(uint8_t addr, uint16_t *out) {
     if (!out) return ESP_ERR_INVALID_ARG;
 
-    // MCP3221 is read-only: request 2 bytes
+    // Slave device is read-only: request 2 bytes
     uint8_t rx[2] = {0};
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
     i2c_master_start(cmd);
-    // 7-bit addr -> on-wire {addr, R=1}
-    i2c_master_write_byte(cmd, (addr << 1) | I2C_MASTER_READ, true);
-    i2c_master_read(cmd, rx, 1, I2C_MASTER_ACK);
-    i2c_master_read_byte(cmd, &rx[1], I2C_MASTER_NACK);
+
+    // 7-bit addr 
+    i2c_master_write_byte(cmd, (addr << 1) | I2C_MASTER_READ, true); // Sends out 7-bit slave address with read bit
+    i2c_master_read(cmd, rx, 1, I2C_MASTER_ACK);    // captures 1 byte into rx[0] (MSB of 16-bit sensor reading), then sends ACK
+    i2c_master_read_byte(cmd, &rx[1], I2C_MASTER_NACK);     // captures next 1 byte of data (LSB), then sends back ACK
     i2c_master_stop(cmd);
     esp_err_t err = i2c_master_cmd_begin(I2C_PORT, cmd, pdMS_TO_TICKS(50));
     i2c_cmd_link_delete(cmd);
     if (err != ESP_OK) return err;
 
-    // 12-bit right-aligned across two bytes: [MSB D11..D4], [LSB D3..D0 | xxxx]
+    // Obtain raw sensor reading with MSB = rx[0] and LSB = rx[1]
     uint16_t raw = ((uint16_t)rx[0] << 8) | rx[1];
-    raw >>= 4;
-    *out = raw & 0x0FFF;
+    *out = raw;
     return ESP_OK;
 }
 
