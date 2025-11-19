@@ -54,7 +54,7 @@ const adc_channel_t fsr_pins[NUM_FSRS] = {
     // ADC_CHANNEL_8
 };
 
-static const uint8_t MCP_ADDRS[] = {
+static const uint8_t ADC_SLAVE_ADDRS[] = {
     MCP3221_ADDR1, ADC_ADDR1, ADC_ADDR2
 };
 
@@ -88,21 +88,15 @@ void read_fsr_task(void *pvParameter) {
         }
     }
 
-    // --- Circular buffer for each FSR Channel ---
     // Holds the last sample of size WINDOW_SIZE for each FSR sensor
     static int signal_buffer[NUM_FSRS][WINDOW_SIZE] = {0};
     ESP_LOGI(TAG, "Using static buffer: %d bytes", sizeof(signal_buffer));
-
-    //int (*signal_buffer)[WINDOW_SIZE] = (int(*)[WINDOW_SIZE])heap_caps_calloc(NUM_FSRS, sizeof(*signal_buffer), MALLOC_CAP_DEFAULT);
-    //assert(signal_buffer);
     
     // Index to store next sample in circular buffer
     int buffer_index = 0;
 
     // Counts number of samples since last window extraction
     int sample_counter = 0;
-
-    //TickType_t last_wake_time = xTaskGetTickCount();
 
     int decim = 0;
 
@@ -119,7 +113,6 @@ void read_fsr_task(void *pvParameter) {
                 printf("FSR%d: ADC Read Failed (%d)\n", i, err);
                 fsr_values[i] = 0;                               // keep packet defined
             }
-
             esp_rom_delay_us(40); // slow down ADC sampling rate
         }
 
@@ -134,21 +127,55 @@ void read_fsr_task(void *pvParameter) {
             // Send one notification containing all channels
             bool ok = ble_send_fsr_sample(fsr_values, NUM_FSRS);  
 
-            // if (!ok) {
-            //     ESP_LOGW(TAG, "enqueue failed (queue null/full or n invalid)");
-            // } else {
-            //     ESP_LOGW(TAG, "queued success");
-            // }
+            if (!ok) {
+                ESP_LOGW(TAG, "enqueue failed (queue null/full or n invalid)");
+            } else {
+                ESP_LOGW(TAG, "queued success");
+            }
         }
 
         vTaskDelayUntil(&last_wake, sample_period);
         
         log_counter = (log_counter + 1) % log_interval;
-
     }
     
     adc_oneshot_del_unit(adc1_handle);
     vTaskDelete(NULL);
+}
+
+static inline float code_to_volts(uint16_t code, float vref) {
+    return (code / 4095.0f) * vref;
+}
+
+void i2c_read_sensors(void *pvParameter) {
+    const float VREF = 3.3f; 
+    while (1) {
+        for (size_t i = 0; i < sizeof(ADC_SLAVE_ADDRS); ++i) {
+            const uint8_t addr = ADC_SLAVE_ADDRS[i];
+            uint16_t code = 0;
+            esp_err_t e = mcp3221_read_raw(addr, &code);
+            if (e == ESP_OK) {
+                float v = code_to_volts(code, VREF);
+                fsr_values[i] = code;     
+                ESP_LOGI(TAG, "MCP3221[0x%02X] code=%4u  V=%.3f", addr, code, v);
+            } else {
+                ESP_LOGW(TAG, "Read fail @ 0x%02X: %s", addr, esp_err_to_name(e));
+            }
+        }
+
+        if (ble_notify_ready()) {
+            // Send one notification containing all channels
+            bool ok = ble_send_fsr_sample(fsr_values, NUM_FSRS);  
+
+            if (!ok) {
+                ESP_LOGW(TAG, "enqueue failed (queue null/full or n invalid)");
+            } else {
+                ESP_LOGW(TAG, "queued success");
+            }
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(200));
+    }
 }
 
 static void init_usb_stdio(void) {
@@ -174,46 +201,17 @@ void i2c_scan() {
     ESP_LOGI("SCAN", "Found %d device(s).", found);
 }
 
-static inline float code_to_volts(uint16_t code, float vref) {
-    return (code / 4095.0f) * vref;
-}
-
 extern "C" void app_main(void) {
     ble_init();
     
     // Testing I2C capabilities
     ESP_ERROR_CHECK(i2c_master_init());
     i2c_scan();
-    const float VREF = 3.3f;  // change if your MCP3221 VDD differs
-    while (1) {
-        for (size_t i = 0; i < sizeof(MCP_ADDRS); ++i) {
-            const uint8_t addr = MCP_ADDRS[i];
-            uint16_t code = 0;
-            esp_err_t e = mcp3221_read_raw(addr, &code);
-            if (e == ESP_OK) {
-                float v = code_to_volts(code, VREF);
-                fsr_values[i] = code;     
-                ESP_LOGI(TAG, "MCP3221[0x%02X] code=%4u  V=%.3f", addr, code, v);
-            } else {
-                ESP_LOGW(TAG, "Read fail @ 0x%02X: %s", addr, esp_err_to_name(e));
-            }
-        }
+    
+    // Read FSR data via i2c and run BT
+    xTaskCreate(&i2c_read_sensors, "i2c_read_sensors", 4096, NULL, 5, NULL);
 
-        if (ble_notify_ready()) {
-            // Send one notification containing all channels
-            bool ok = ble_send_fsr_sample(fsr_values, NUM_FSRS);  
-
-            // if (!ok) {
-            //     ESP_LOGW(TAG, "enqueue failed (queue null/full or n invalid)");
-            // } else {
-            //     ESP_LOGW(TAG, "queued success");
-            // }
-        }
-
-        vTaskDelay(pdMS_TO_TICKS(200));
-    }
-
-    // FSR CODE to read analog pins and run BT
+    // Read FSR data to analog pins and run BT
     //xTaskCreate(&read_fsr_task, "read_fsr_task", 4096, NULL, 5, NULL);
 
     //Direct usb data sending

@@ -195,7 +195,7 @@ static int ble_gap_event(struct ble_gap_event *event, void *arg) {
         ESP_LOGI(TAG, "GAP event not handled, code:%u", event->type);
         break;
     }
-
+    
     return 0;
 }
 
@@ -285,7 +285,7 @@ bool ble_send_fsr_sample(const int *data, size_t n) {
 
 
 void ble_notify_task(void *param) {
-    
+
     fsr_payload_t p;
 
     while(1) {
