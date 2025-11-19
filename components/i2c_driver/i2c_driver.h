@@ -7,7 +7,7 @@
 #define I2C_PORT I2C_NUM_0
 #define SDA_PIN 8
 #define SCL_PIN 9
-#define I2C_FREQ_HZ 100000
+#define I2C_FREQ_HZ 300000
 
 // Slave device addresses
 #define MCP3221_ADDR1 0x49

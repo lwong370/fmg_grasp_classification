@@ -21,7 +21,7 @@
 #define NOTIFY_TASK_PRIO   5
 #define FSR_QUEUE_DEPTH    1
 #ifndef BLE_FSR_MAX_ELEMS
-#define BLE_FSR_MAX_ELEMS  2   // or NUM_FSRS, but keep it >= max n you’ll send
+#define BLE_FSR_MAX_ELEMS  3   // or NUM_FSRS, but keep it >= max n you’ll send
 #endif
 
 char *TAG = "BLE-Server";
@@ -159,16 +159,16 @@ static int ble_gap_event(struct ble_gap_event *event, void *arg) {
     case BLE_GAP_EVENT_NOTIFY_TX: // use notify characteristic to send data
         struct ble_gap_conn_desc desc;
         if (ble_gap_conn_find(event->notify_tx.conn_handle, &desc) == 0) {
-            ESP_LOGI(TAG,
-                     "%s TX: peer=%02X:%02X:%02X:%02X:%02X:%02X attr=%u status=%d",
-                     event->notify_tx.indication ? "INDIC" : "NOTIF",
-                     desc.peer_id_addr.val[0], 
-                     desc.peer_id_addr.val[1], 
-                     desc.peer_id_addr.val[2],
-                     desc.peer_id_addr.val[3], 
-                     desc.peer_id_addr.val[4], 
-                     desc.peer_id_addr.val[5],
-                     event->notify_tx.attr_handle, event->notify_tx.status);
+            // ESP_LOGI(TAG,
+            //          "%s TX: peer=%02X:%02X:%02X:%02X:%02X:%02X attr=%u status=%d",
+            //          event->notify_tx.indication ? "INDIC" : "NOTIF",
+            //          desc.peer_id_addr.val[0], 
+            //          desc.peer_id_addr.val[1], 
+            //          desc.peer_id_addr.val[2],
+            //          desc.peer_id_addr.val[3], 
+            //          desc.peer_id_addr.val[4], 
+            //          desc.peer_id_addr.val[5],
+            //          event->notify_tx.attr_handle, event->notify_tx.status);
         } else {
             ESP_LOGW(TAG, "NOTIFY_TX: conn not found (handle=%d)", event->notify_tx.conn_handle);
         }
@@ -301,7 +301,7 @@ void ble_notify_task(void *param) {
                 if (rc == 0) {
                     int first = 0;
                     if (p.len >= sizeof(int)) memcpy(&first, p.bytes, sizeof(int));
-                        ESP_LOGI(TAG, "Notify queued: attr=0x%04x bytes=%u first=%d", sensor_data_handle, (unsigned)p.len, first);
+                        //ESP_LOGI(TAG, "Notify queued: attr=0x%04x bytes=%u first=%d", sensor_data_handle, (unsigned)p.len, first);
                     }
                 else {
                     ESP_LOGE(TAG, "Error sending notification: %d", rc);
@@ -312,7 +312,7 @@ void ble_notify_task(void *param) {
             }
         }
         else {
-            ESP_LOGW(TAG, "No active connection, waiting...");
+            //ESP_LOGW(TAG, "No active connection, waiting...");
         }
         
         vTaskDelay(pdMS_TO_TICKS(10));  // Send every 500ms (adjust as needed)
@@ -353,8 +353,17 @@ void ble_init() {
     ble_svc_gap_init();
     ble_svc_gatt_init();
 
+    // Set Maximum Transmission Unit
+    int mtu_value = 517; // A common maximum value (up to 517)
+    int rc = ble_att_set_preferred_mtu(mtu_value);
+    if (rc != 0) {
+        ESP_LOGE(TAG, "Failed to set preferred MTU: %d", rc);
+    } else {
+        ESP_LOGI(TAG, "Preferred local MTU set to %d", mtu_value);
+    }
+
     // Set device name
-    int rc = ble_svc_gap_device_name_set(DEVICE_NAME);
+    rc = ble_svc_gap_device_name_set(DEVICE_NAME);
     if (rc != 0) {
         ESP_LOGE(TAG, "Failed to set device name: %d", rc);
     }

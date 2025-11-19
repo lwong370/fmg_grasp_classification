@@ -176,7 +176,6 @@ void i2c_scan() {
 
 static inline float code_to_volts(uint16_t code, float vref) {
     return (code / 4095.0f) * vref;
-   //return code;
 }
 
 extern "C" void app_main(void) {
@@ -193,11 +192,24 @@ extern "C" void app_main(void) {
             esp_err_t e = mcp3221_read_raw(addr, &code);
             if (e == ESP_OK) {
                 float v = code_to_volts(code, VREF);
+                fsr_values[i] = code;     
                 ESP_LOGI(TAG, "MCP3221[0x%02X] code=%4u  V=%.3f", addr, code, v);
             } else {
                 ESP_LOGW(TAG, "Read fail @ 0x%02X: %s", addr, esp_err_to_name(e));
             }
         }
+
+        if (ble_notify_ready()) {
+            // Send one notification containing all channels
+            bool ok = ble_send_fsr_sample(fsr_values, NUM_FSRS);  
+
+            // if (!ok) {
+            //     ESP_LOGW(TAG, "enqueue failed (queue null/full or n invalid)");
+            // } else {
+            //     ESP_LOGW(TAG, "queued success");
+            // }
+        }
+
         vTaskDelay(pdMS_TO_TICKS(200));
     }
 

@@ -6,8 +6,8 @@
 
 // C-compatible definitions
 // FSR & Sampling Parameters
-#define NUM_CHANNELS 2
-#define NUM_FSRS 2
+#define NUM_CHANNELS 3
+#define NUM_FSRS 3
 #define SAMPLE_RATE_MS 10           // Sample every 10ms
 #define WINDOW_DURATION_MS 200
 #define STEP_DURATION_MS 50
