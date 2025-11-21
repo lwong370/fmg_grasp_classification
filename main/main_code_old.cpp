@@ -47,15 +47,15 @@ const adc_channel_t fsr_pins[NUM_FSRS] = {
     //ADC_CHANNEL_0, 
     ADC_CHANNEL_1, 
     ADC_CHANNEL_2,
-    ADC_CHANNEL_3
-    // ADC_CHANNEL_5, 
+    ADC_CHANNEL_3,
+    ADC_CHANNEL_5 
     // ADC_CHANNEL_6 
     // ADC_CHANNEL_7
     // ADC_CHANNEL_8
 };
 
 static const uint8_t ADC_SLAVE_ADDRS[] = {
-    MCP3221_ADDR1, ADC_ADDR1, ADC_ADDR2
+    MCP3221_ADDR1, ADC_ADDR1, ADC_ADDR2, ADC_ADDR3
 };
 
 void read_fsr_task(void *pvParameter) {
