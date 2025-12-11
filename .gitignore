@@ -37,10 +37,16 @@ fp-info-cache
 .svg2shenzhen-cache
 
 # ESP-IDF build logs
+build/
 build/log/idf_py_stderr_output_*
 build/log/
 build/CMakeFiles/
 build/*.bin
 build/*.elf
 build/*.map
+
+# VSCode and Configurations
+sdkconfig.old
+.vscode/
+
 
