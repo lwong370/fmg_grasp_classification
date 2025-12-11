@@ -21,7 +21,7 @@
 #define NOTIFY_TASK_PRIO   5
 #define FSR_QUEUE_DEPTH    1
 #ifndef BLE_FSR_MAX_ELEMS
-#define BLE_FSR_MAX_ELEMS  4   // or NUM_FSRS, but keep it >= max n you’ll send
+#define BLE_FSR_MAX_ELEMS  5   // or NUM_FSRS, but keep it >= max n you’ll send
 #endif
 
 char *TAG = "BLE-Server";

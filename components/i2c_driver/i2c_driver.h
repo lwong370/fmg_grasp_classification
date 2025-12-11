@@ -14,6 +14,7 @@
 #define ADC_ADDR1 0x50
 #define ADC_ADDR2 0x51
 #define ADC_ADDR3 0x52
+#define ADC_ADDR4 0x55
 
 #ifdef __cplusplus
 extern "C" {

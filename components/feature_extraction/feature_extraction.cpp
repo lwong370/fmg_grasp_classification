@@ -10,7 +10,6 @@ double center_point = 0.7;                         // 70% of data we want to loo
 double time_band = contraction_time * center_point;  // how much 
 double half_time_band = time_band/2.0;
 
-// const int NUM_CHANNELS = 8;
 // Create type alias for code readability
 using MAVFeatureSet = std::vector<MAVFeature>; // One feature vector per window
 
@@ -26,7 +25,7 @@ float compute_mav(const std::vector<int>& signal) {
 // Calculate MAV for one window
 MAVFeature extract_mav_feature_from_window(const Window& window) {
     MAVFeature features;
-    for (int channel = 0; channel < NUM_CHANNELS; channel++) {
+    for (int channel = 0; channel < NUM_FSRS; channel++) {
         features[channel] = compute_mav(window[channel]); 
     }
     return features;
