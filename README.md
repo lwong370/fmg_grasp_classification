@@ -6,7 +6,10 @@ Designing an embedded wearable device pipeline as a modular application for regi
 
 ### Built with: 
 #### *Software*
+- C++
+- C
 - ESP-IDF Driver
+- FreeRTOS
   
 #### *Hardware*
 | Part | Quantity 
