@@ -35,3 +35,12 @@ fp-info-cache
 *.log
 *.raw
 .svg2shenzhen-cache
+
+# ESP-IDF build logs
+build/log/idf_py_stderr_output_*
+build/log/
+build/CMakeFiles/
+build/*.bin
+build/*.elf
+build/*.map
+
