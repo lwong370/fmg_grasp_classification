@@ -4,6 +4,8 @@
 ### Objective
 Designing an embedded wearable device pipeline as a modular application for registering biopotential signal acquisition and wireless data transmission to a computer application for prosthetic rehabilitation applications.
 
+First step is to build a device prototype only using Force myography (FMG) as the main modality of sensing. I will eventually move on to capturing electromyography (EMG) signals, which are more complicated and require more hardware filtering. 
+
 ### Built with: 
 #### *Software*
 - C++
@@ -27,7 +29,7 @@ Designing an embedded wearable device pipeline as a modular application for regi
 ## **Current Progress** 
 **I will update this as I go :D
 
-At this point, I have a breadboard prototype that includes:
+At this point I have a breadboard FMG prototype, where I've completed:
 - Selected necessary electronic componenets to build the system. Developed break-out boards required to connect SMD components to through-hole breadboard system. 
 - Wired ADC IC's to an I2C busline and developed firmware code that communicates with the ICs slave addresses to read in force sensor data
 - Use FreeRTOS to schedule tasks that collect data from force sensors and send that data to MATLAB wirelessly over BLE.
@@ -35,7 +37,7 @@ At this point, I have a breadboard prototype that includes:
 
 ## Design Phases and Decisions
 
-**Phase 1**: Breadboard prototype with FMG sensors  
+### **Phase 1**: Breadboard prototype with FMG sensors  
 <p align="center">
   <img src="./images/breadboard_prototype.png"
        alt="Prototype on breadboard"
@@ -47,8 +49,10 @@ At this point, I have a breadboard prototype that includes:
      This approach ultimately eliminates extra wiring and enables modularity, allowing different sensor types to be swapped in and out of the band.  
      Drawback is that I²C is slower than other alternatives such as SPI sensor interfaces or direct ADC pin connections. However, using I²C ensures that the number of available ADC pins on the MCU does not limit the number of sensor channels, allowing for future expansion if additional sensors are added. While adding more sensors does increase I²C bus latency, the physical space constraints of the band inherently cap the number of sensors that can be placed. As a result, the latency will remain well within acceptable limits for our data acquisition requirements.
 
+2. **Using FreeRTOS queue to store sensor data**
+   Using a FreeRTOS queue allows sensor data to be passed between tasks in a thread-safe and time-decoupled (meaning sampling task and BLE task don't need to run at the same rate) way. Unlike writing FSR readings directly into a shared array, a queue transfers each sample as a complete set of all sensor readings at a time, preventing race conditions where BLE might read partially updated data. The queue also buffers samples when BLE transmission is delayed, letting the sensor task run at a stable rate without blocking. 
 
-**Phase 2**: Breadboard prototype with FMG sensors  
+### **Phase 2**: Migrating to PCB prototype  
 - **PCB Design: MCU Daughter Board**
 <p align="center">
   <img src="./images/esp_motherboard.png"
