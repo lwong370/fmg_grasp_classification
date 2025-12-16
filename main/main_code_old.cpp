@@ -95,9 +95,6 @@ void read_fsr_task(void *pvParameter) {
     // Index to store next sample in circular buffer
     int buffer_index = 0;
 
-    // Counts number of samples since last window extraction
-    int sample_counter = 0;
-
     int decim = 0;
 
     while (1) {  
@@ -174,7 +171,7 @@ void i2c_read_sensors(void *pvParameter) {
             }
         }
 
-        vTaskDelay(pdMS_TO_TICKS(200));
+        vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
 

@@ -18,10 +18,9 @@
 #include "../components/constants/config.h"
 
 #define NOTIFY_TASK_STACK  4096
-#define NOTIFY_TASK_PRIO   5
-#define FSR_QUEUE_DEPTH    1
+#define FSR_QUEUE_DEPTH    3
 #ifndef BLE_FSR_MAX_ELEMS
-#define BLE_FSR_MAX_ELEMS  5   // or NUM_FSRS, but keep it >= max n you’ll send
+#define BLE_FSR_MAX_ELEMS  NUM_FSRS
 #endif
 
 char *TAG = "BLE-Server";
@@ -138,6 +137,7 @@ static int ble_gap_event(struct ble_gap_event *event, void *arg) {
     
     case BLE_GAP_EVENT_ADV_COMPLETE: // advertising finished
         ESP_LOGI(TAG, "ADV complete: reason=%d", event->adv_complete.reason);
+        
         // Restart if not connected
         if (conn_handle == BLE_HS_CONN_HANDLE_NONE) {
             ble_app_advertise();
@@ -272,9 +272,12 @@ bool ble_send_fsr_sample(const int *data, size_t n) {
     fsr_payload_t p;
     p.len = n * sizeof(int);
     memcpy(p.bytes, data, p.len);
-    BaseType_t sent = xQueueSend(sensor_input_queue, &p, 0);
-    return sent == pdTRUE;
-
+    BaseType_t sent = xQueueSend(sensor_input_queue, &p, 0);    // Try to add item to queue
+    if (sent != pdTRUE) {
+        ESP_LOGE(TAG, "Queue is full");
+    }
+    return true;
+    
 
     // Code for FSR buffer of size 1
     // fsr_payload_t p;
@@ -291,7 +294,8 @@ void ble_notify_task(void *param) {
     while(1) {
         if (conn_handle != BLE_HS_CONN_HANDLE_NONE && sensor_data_handle != 0 && notify_client) {
             
-           if (xQueueReceive(sensor_input_queue, &p, portMAX_DELAY) != pdTRUE) continue;
+            // Read from the queue with xQueueReceive
+            if (xQueueReceive(sensor_input_queue, &p, portMAX_DELAY) != pdTRUE) continue;
 
             // Create mbuf to hold data
             struct os_mbuf *om = ble_hs_mbuf_from_flat(p.bytes, p.len);
@@ -315,7 +319,7 @@ void ble_notify_task(void *param) {
             //ESP_LOGW(TAG, "No active connection, waiting...");
         }
         
-        vTaskDelay(pdMS_TO_TICKS(10));  // Send every 500ms (adjust as needed)
+        vTaskDelay(pdMS_TO_TICKS(10)); 
     }
 }
 
@@ -323,7 +327,9 @@ void ble_init() {
     esp_err_t ret;
     esp_log_level_set(TAG, ESP_LOG_DEBUG);
 
-    if (!sensor_input_queue) sensor_input_queue = xQueueCreate(FSR_QUEUE_DEPTH, sizeof(fsr_payload_t));
+    if (!sensor_input_queue){
+        sensor_input_queue = xQueueCreate(FSR_QUEUE_DEPTH, sizeof(fsr_payload_t));
+    }
     ESP_LOGI(TAG, "FSR queue created: %p (item=%u bytes)", (void*)sensor_input_queue, (unsigned)sizeof(fsr_payload_t));
     xTaskCreate(ble_notify_task, "ble_notify_task", 4096, NULL, 6, NULL); 
 
