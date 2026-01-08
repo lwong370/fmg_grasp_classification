@@ -147,7 +147,7 @@ static inline float code_to_volts(uint16_t code, float vref) {
 void i2c_read_sensors(void *pvParameter) {
     const float VREF = 3.3f; 
     while (1) {
-        for (size_t i = 0; i < sizeof(ADC_SLAVE_ADDRS); ++i) {
+        for (size_t i = 0; i < sizeof(NUM_FSRS); ++i) {
             const uint8_t addr = ADC_SLAVE_ADDRS[i];
             uint16_t code = 0;
             esp_err_t e = mcp3221_read_raw(addr, &code);
@@ -160,6 +160,7 @@ void i2c_read_sensors(void *pvParameter) {
             }
         }
 
+        // For sending data over BlueTooth 
         if (ble_notify_ready()) {
             // Send one notification containing all channels
             bool ok = ble_send_fsr_sample(fsr_values, NUM_FSRS);  
@@ -171,7 +172,15 @@ void i2c_read_sensors(void *pvParameter) {
             }
         }
 
-        vTaskDelay(pdMS_TO_TICKS(100));
+        // For sending data over direct USB
+        // uint64_t t_us = (uint64_t)esp_timer_get_time();
+        // printf("%" PRIu64, t_us);
+        // for (size_t i = 0; i < NUM_FSRS; ++i) {
+        //     printf(",%u", (unsigned)fsr_values[i]);
+        // }
+        // printf("\n");
+
+        // vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
 
@@ -201,18 +210,17 @@ void i2c_scan() {
 extern "C" void app_main(void) {
     ble_init();
     
-    // Testing I2C capabilities
-    ESP_ERROR_CHECK(i2c_master_init());
-    i2c_scan();
-    
-    // Read FSR data via i2c and run BT
-    xTaskCreate(&i2c_read_sensors, "i2c_read_sensors", 4096, NULL, 5, NULL);
-
     // Read FSR data to analog pins and run BT
     //xTaskCreate(&read_fsr_task, "read_fsr_task", 4096, NULL, 5, NULL);
 
-    //Direct usb data sending
-    //init_usb_stdio();
+    // Enable I2C
+    ESP_ERROR_CHECK(i2c_master_init());
+    i2c_scan();
+
+    // Direct usb data sending
+    init_usb_stdio();
+
+    xTaskCreate(&i2c_read_sensors, "i2c_read_sensors", 4096, NULL, 5, NULL);
     //uint64_t t_us = esp_timer_get_time();
 
     // Task delay
