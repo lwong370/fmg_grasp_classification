@@ -14,6 +14,7 @@
 #include "esp_log.h"
 // #include "esp_spiffs.h"
 #include "esp_adc/adc_oneshot.h"
+#include "driver/usb_serial_jtag.h"
 // #include "../src/fsr_reader.h"
 // #include "driver/adc.h"  
 #include "predict.h"
@@ -140,6 +141,28 @@ void read_fsr_task(void *pvParameter) {
     vTaskDelete(NULL);
 }
 
+static void usb_print_csv_sample(uint64_t curr_timestamp, int *fsr, size_t num_channels) {
+    char buffer[128]; 
+    int n = 0;
+
+    n += snprintf(buffer + n, sizeof(buffer) - n, "%" PRIu64, curr_timestamp);  // Write timestamp
+    for (size_t i = 0; i < num_channels; ++i) {
+        if(n < (int)sizeof(buffer)) {
+            n += snprintf(buffer + n, sizeof(buffer) - n, ",%u", (unsigned)fsr[i]);
+        }
+    }
+
+    if (n < (int)sizeof(buffer)) {
+        n += snprintf(buffer + n, sizeof(buffer) - n, "\n");
+    } else {
+        // Ensure line ends cleanly
+        buffer[sizeof(buffer) - 2] = '\n';
+        buffer[sizeof(buffer) - 1] = '\0';
+    }
+
+    printf("%s", buffer);
+}
+
 static inline float code_to_volts(uint16_t code, float vref) {
     return (code / 4095.0f) * vref;
 }
@@ -160,27 +183,24 @@ void i2c_read_sensors(void *pvParameter) {
             }
         }
 
-        // For sending data over BlueTooth 
-        if (ble_notify_ready()) {
-            // Send one notification containing all channels
-            bool ok = ble_send_fsr_sample(fsr_values, NUM_FSRS);  
+        if(!usb_serial_jtag_is_connected()) {
+            // For sending data over BlueTooth 
+            if (ble_notify_ready()) {
+                bool ok = ble_send_fsr_sample(fsr_values, NUM_FSRS);  // Send one notification with all channels
 
-            if (!ok) {
-                ESP_LOGW(TAG, "enqueue failed (queue null/full or n invalid)");
-            } else {
-                ESP_LOGW(TAG, "queued success");
+                if (!ok) {
+                    ESP_LOGW(TAG, "enqueue failed (queue null/full or n invalid)");
+                } else {
+                    ESP_LOGW(TAG, "queued success");
+                }
             }
+        } else {
+            // For sending data over direct USB
+            uint64_t t_us = (uint64_t)esp_timer_get_time();
+            usb_print_csv_sample(t_us, fsr_values, NUM_FSRS);
+
+            vTaskDelay(pdMS_TO_TICKS(100));
         }
-
-        // For sending data over direct USB
-        // uint64_t t_us = (uint64_t)esp_timer_get_time();
-        // printf("%" PRIu64, t_us);
-        // for (size_t i = 0; i < NUM_FSRS; ++i) {
-        //     printf(",%u", (unsigned)fsr_values[i]);
-        // }
-        // printf("\n");
-
-        // vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
 
