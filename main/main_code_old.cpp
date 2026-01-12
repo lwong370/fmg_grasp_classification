@@ -197,10 +197,10 @@ void i2c_read_sensors(void *pvParameter) {
         } else {
             // For sending data over direct USB
             uint64_t t_us = (uint64_t)esp_timer_get_time();
-            usb_print_csv_sample(t_us, fsr_values, NUM_FSRS);
-
-            vTaskDelay(pdMS_TO_TICKS(100));
+            usb_print_csv_sample(t_us, fsr_values, NUM_FSRS);  
         }
+        
+        vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
 
