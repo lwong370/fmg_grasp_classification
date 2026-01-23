@@ -10,11 +10,12 @@
 #define I2C_FREQ_HZ 300000
 
 // Slave device addresses
-#define MCP3221_ADDR1 0x49
+// #define MCP3221_ADDR1 0x49
 #define ADC_ADDR1 0x50
 #define ADC_ADDR2 0x51
 #define ADC_ADDR3 0x52
-#define ADC_ADDR4 0x55
+#define ADC_ADDR4 0x54
+#define ADC_ADDR5 0x55
 
 #ifdef __cplusplus
 extern "C" {

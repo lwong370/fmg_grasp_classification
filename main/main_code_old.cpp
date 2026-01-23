@@ -51,7 +51,7 @@ QueueHandle_t feature_queue;
 static QueueHandle_t usb_queue = NULL;
 
 static const uint8_t ADC_SLAVE_ADDRS[] = {
-    MCP3221_ADDR1, ADC_ADDR1, ADC_ADDR2, ADC_ADDR3, ADC_ADDR4
+    ADC_ADDR1, ADC_ADDR2, ADC_ADDR3, ADC_ADDR4, ADC_ADDR5
 };
 
 static inline float code_to_volts(uint16_t code, float vref) {
