@@ -44,12 +44,12 @@ QueueHandle_t feature_queue;
 int fsr_values[NUM_FSRS];  
 
 const adc_channel_t fsr_pins[NUM_FSRS] = {
-    //ADC_CHANNEL_0, 
+    ADC_CHANNEL_0,
     ADC_CHANNEL_1, 
     ADC_CHANNEL_2,
-    ADC_CHANNEL_3,
-    ADC_CHANNEL_5, 
-    ADC_CHANNEL_6 
+    ADC_CHANNEL_3
+    // ADC_CHANNEL_5, 
+    // ADC_CHANNEL_6 
     // ADC_CHANNEL_7
     // ADC_CHANNEL_8
 };
@@ -116,7 +116,7 @@ void read_fsr_task(void *pvParameter) {
         // Print FSR readings to console
         if (++decim >= 25) {
             //printf("%d\n", fsr_values[0]);
-            printf("%d, %d, %d\n", fsr_values[0], fsr_values[1], fsr_values[2]);
+            printf("%d, %d, %d, %d\n", fsr_values[0], fsr_values[1], fsr_values[2], fsr_values[3]);
             decim = 0;
         }
 
@@ -211,16 +211,16 @@ extern "C" void app_main(void) {
     ble_init();
     
     // Read FSR data to analog pins and run BT
-    //xTaskCreate(&read_fsr_task, "read_fsr_task", 4096, NULL, 5, NULL);
+    xTaskCreate(&read_fsr_task, "read_fsr_task", 4096, NULL, 5, NULL);
 
     // Enable I2C
-    ESP_ERROR_CHECK(i2c_master_init());
-    i2c_scan();
+    // ESP_ERROR_CHECK(i2c_master_init());
+    // i2c_scan();
 
-    // Direct usb data sending
-    init_usb_stdio();
+    // // Direct usb data sending
+    // init_usb_stdio();
 
-    xTaskCreate(&i2c_read_sensors, "i2c_read_sensors", 4096, NULL, 5, NULL);
+    // xTaskCreate(&i2c_read_sensors, "i2c_read_sensors", 4096, NULL, 5, NULL);
     //uint64_t t_us = esp_timer_get_time();
 
     // Task delay
