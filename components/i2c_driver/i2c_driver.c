@@ -1,8 +1,23 @@
 #include "i2c_driver.h"
 #include "driver/i2c.h"
-#include "esp_check.h"      
+#include "esp_check.h"    
+
+static void feather_enable_i2c_power(void) {
+    gpio_config_t cfg = {
+    .pin_bit_mask = 1ULL << I2C_POWER_GPIO,
+    .mode = GPIO_MODE_OUTPUT,
+    .pull_up_en = GPIO_PULLUP_DISABLE,
+    .pull_down_en = GPIO_PULLDOWN_DISABLE,
+    .intr_type = GPIO_INTR_DISABLE
+    };
+    gpio_config(&cfg);
+    gpio_set_level(I2C_POWER_GPIO, 1);
+    vTaskDelay(pdMS_TO_TICKS(10));
+}
 
 esp_err_t i2c_master_init(void) {
+    feather_enable_i2c_power();
+    
     i2c_config_t cfg = {
         .mode = I2C_MODE_MASTER,
         .sda_io_num = SDA_PIN,
