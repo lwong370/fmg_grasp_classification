@@ -20,7 +20,7 @@
 #define NOTIFY_TASK_STACK  4096
 #define FSR_QUEUE_DEPTH    3
 #ifndef BLE_FSR_MAX_ELEMS
-#define BLE_FSR_MAX_ELEMS  NUM_FSRS
+#define BLE_FSR_MAX_ELEMS  MAX_SENSOR_CHANNELS
 #endif
 
 char *TAG = "BLE-Server";
@@ -284,7 +284,6 @@ void ble_send_fsr_sample(const int *data, size_t n) {
     // xQueueOverwrite(bt_input_queue, &p); 
 
 }
-
 
 void ble_notify_task(void *param) {
 

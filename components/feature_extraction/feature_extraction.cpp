@@ -25,7 +25,7 @@ float compute_mav(const std::vector<int>& signal) {
 // Calculate MAV for one window
 MAVFeature extract_mav_feature_from_window(const Window& window) {
     MAVFeature features;
-    for (int channel = 0; channel < NUM_FSRS; channel++) {
+    for (int channel = 0; channel < num_sensor_chls; channel++) {
         features[channel] = compute_mav(window[channel]); 
     }
     return features;

@@ -12,11 +12,8 @@
 #include <array>
 #include "../liblinear/linear.h"
 #include "esp_log.h"
-// #include "esp_spiffs.h"
 #include "esp_adc/adc_oneshot.h"
 #include "driver/usb_serial_jtag.h"
-// #include "../src/fsr_reader.h"
-// #include "driver/adc.h"  
 #include "predict.h"
 #include "driver/i2c.h"
 #include "i2c_driver.h"
@@ -42,13 +39,16 @@ extern "C" {
 
 #define TAG "MY_APP"
 
+int num_sensor_chls = 0;
+
 typedef struct {
     uint64_t timestamp;
-    int ch[NUM_FSRS];
+    int ch[MAX_SENSOR_CHANNELS];
 } sensor_sample_t;
 
 QueueHandle_t feature_queue;
 static QueueHandle_t usb_queue = NULL;
+
 
 static const uint8_t ADC_SLAVE_ADDRS[] = {
     ADC_ADDR1, ADC_ADDR2, ADC_ADDR3, ADC_ADDR4, ADC_ADDR5
@@ -71,6 +71,7 @@ void i2c_scan() {
             ESP_LOGI("SCAN", "Found @ 0x%02X", addr); 
             found++; } 
     }
+    num_sensor_chls = found;
     ESP_LOGI("SCAN", "Found %d device(s).", found);
 }
 
@@ -79,7 +80,7 @@ void i2c_read_sensors(void *pvParameter) {
     while (1) {
         sensor_sample_t sample = {0};
         sample.timestamp = esp_timer_get_time();
-        for (size_t i = 0; i < NUM_FSRS; ++i) {
+        for (size_t i = 0; i < num_sensor_chls; ++i) {
             const uint8_t addr = ADC_SLAVE_ADDRS[i];
             uint16_t code = 0;
             esp_err_t e = mcp3221_read_raw(addr, &code);
@@ -99,7 +100,7 @@ void i2c_read_sensors(void *pvParameter) {
         } else {
             // Pipeline for sending data over Bluetooth 
             if (ble_notify_ready()) {
-                ble_send_fsr_sample(sample.ch, NUM_FSRS);  // Send one notification with all channels
+                ble_send_fsr_sample(sample.ch, num_sensor_chls);  // Send one notification with all channels
             }
         }
  
@@ -117,6 +118,7 @@ static void init_usb_stdio(void) {
 static void usb_print_csv_sample(uint64_t curr_timestamp, int *fsr, size_t num_channels) {
     char buffer[128]; 
     int n = 0;
+    bool truncated = false;
 
     n += snprintf(buffer + n, sizeof(buffer) - n, "%" PRIu64, curr_timestamp);  // Write timestamp
     for (size_t i = 0; i < num_channels; ++i) {
@@ -128,9 +130,16 @@ static void usb_print_csv_sample(uint64_t curr_timestamp, int *fsr, size_t num_c
     if (n < (int)sizeof(buffer)) {
         n += snprintf(buffer + n, sizeof(buffer) - n, "\n");
     } else {
-        // Ensure line ends cleanly
-        buffer[sizeof(buffer) - 2] = '\n';
-        buffer[sizeof(buffer) - 1] = '\0';
+        truncated = true;
+    }
+
+    if(truncated) {
+        static uint32_t trunc_count = 0;
+        trunc_count+=1;
+        if((trunc_count % 100) == 1) {
+            ESP_LOGW(TAG, "USB data line truncated. Buffer too small for incoming data.");
+        }
+        return;
     }
 
     printf("%s", buffer);
@@ -144,12 +153,19 @@ static void usb_send_task(void *pv)
         if (xQueueReceive(usb_queue, &sample, portMAX_DELAY) != pdTRUE) continue;
 
         if (usb_serial_jtag_is_connected()) {
-            usb_print_csv_sample(sample.timestamp, sample.ch, NUM_FSRS);
+            usb_print_csv_sample(sample.timestamp, sample.ch, num_sensor_chls);
         }
     }
 }
 
+void log_heap(void) {
+    ESP_LOGI(TAG, "free heap (8-bit) = %u", (unsigned)heap_caps_get_free_size(MALLOC_CAP_8BIT));
+    ESP_LOGI(TAG, "min free heap (8-bit) = %u", (unsigned)heap_caps_get_minimum_free_size(MALLOC_CAP_8BIT));
+    ESP_LOGI(TAG, "largest free block (8-bit) = %u", (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_8BIT));
+}
+
 extern "C" void app_main(void) {
+    
     // Initialize Bluetooth
     ble_init();
 
@@ -165,6 +181,8 @@ extern "C" void app_main(void) {
 
     // Create I2C sensors
     xTaskCreate(&i2c_read_sensors, "i2c_read_sensors", 4096, NULL, 5, NULL);
+
+    log_heap();
 
     // Task delay
     vTaskDelay(pdMS_TO_TICKS(1000));
