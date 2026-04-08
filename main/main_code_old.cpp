@@ -1,8 +1,4 @@
 #include <stdio.h>
-#include "driver/gpio.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "esp_log.h"
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -10,15 +6,15 @@
 #include <map>
 #include <string>
 #include <array>
-#include "../liblinear/linear.h"
+#include "driver/gpio.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 #include "esp_log.h"
-#include "esp_adc/adc_oneshot.h"
+#include "esp_log.h"
 #include "driver/usb_serial_jtag.h"
-#include "predict.h"
 #include "driver/i2c.h"
 #include "i2c_driver.h"
 #include "../components/constants/types.h"
-#include "../components/feature_extraction/feature_extraction.h"
 #include "../components/constants/config.h"
 
 extern "C" { 

@@ -4,7 +4,7 @@ CXXFLAGS = -Wall -Wconversion -O3 -fPIC -Iliblinear -Iliblinear/blas
 LIBS = liblinear/blas/blas.a
 
 # Source files
-SRC_CPP = src/predictor.cpp liblinear/linear.cpp liblinear/newton.cpp main/GPIO_Example.c
+SRC_CPP = main/GPIO_Example.c
 SRC_C = 
 SRC = $(SRC_CPP) $(SRC_C)
 
