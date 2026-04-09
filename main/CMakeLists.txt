@@ -1,9 +1,12 @@
-idf_component_register(SRCS "main_code_old.cpp" "../components/bluetooth/nimble_ble.c"                        
+idf_component_register(SRCS "main.cpp" "../components/bluetooth/nimble_ble.c"                        
                        INCLUDE_DIRS "." 
                        PRIV_REQUIRES bluetooth driver esp_adc i2c_driver main)
 
 set(CMAKE_CXX_STANDARD 17)
 target_compile_options(${COMPONENT_LIB} PRIVATE -std=gnu++17)
+
+# Below is code to create a SPIFFS filesystem to port a file into the MCU. 
+     # Not including this feature in this version of the project.
 # spiffs_create_partition_image(storage ../partition FLASH_IN_PROJECT)
 
 # idf_component_register(

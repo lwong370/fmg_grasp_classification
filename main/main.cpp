@@ -36,6 +36,7 @@ extern "C" {
 #define TAG "MY_APP"
 
 int num_sensor_chls = 0;
+uint8_t detected_slave_addresses[MAX_SENSOR_CHANNELS];
 
 typedef struct {
     uint64_t timestamp;
@@ -44,11 +45,6 @@ typedef struct {
 
 QueueHandle_t feature_queue;
 static QueueHandle_t usb_queue = NULL;
-
-
-static const uint8_t ADC_SLAVE_ADDRS[] = {
-    ADC_ADDR1, ADC_ADDR2, ADC_ADDR3, ADC_ADDR4, ADC_ADDR5
-};
 
 static inline float code_to_volts(uint16_t code, float vref) {
     return (code / 4095.0f) * vref;
@@ -65,7 +61,9 @@ void i2c_scan() {
         i2c_cmd_link_delete(cmd);
         if (err == ESP_OK) {  // Check and logs if ACK sent back
             ESP_LOGI("SCAN", "Found @ 0x%02X", addr); 
-            found++; } 
+            detected_slave_addresses[found] = addr;
+            found++; 
+        } 
     }
     num_sensor_chls = found;
     ESP_LOGI("SCAN", "Found %d device(s).", found);
@@ -77,7 +75,7 @@ void i2c_read_sensors(void *pvParameter) {
         sensor_sample_t sample = {0};
         sample.timestamp = esp_timer_get_time();
         for (size_t i = 0; i < num_sensor_chls; ++i) {
-            const uint8_t addr = ADC_SLAVE_ADDRS[i];
+            const uint8_t addr = detected_slave_addresses[i];
             uint16_t code = 0;
             esp_err_t e = mcp3221_read_raw(addr, &code);
             if (e == ESP_OK) {
@@ -85,7 +83,7 @@ void i2c_read_sensors(void *pvParameter) {
                 sample.ch[i] = code;
                 // ESP_LOGI(TAG, "MCP3221[0x%02X] code=%4u  V=%.3f", addr, code, v);
             } else {
-                ESP_LOGW(TAG, "Read fail @ 0x%02X: %s", addr, esp_err_to_name(e));
+                //ESP_LOGW(TAG, "Read fail @ 0x%02X: %s", addr, esp_err_to_name(e));
             }
         }
 
@@ -141,8 +139,7 @@ static void usb_print_csv_sample(uint64_t curr_timestamp, int *fsr, size_t num_c
     printf("%s", buffer);
 }
 
-static void usb_send_task(void *pv)
-{
+static void usb_send_task(void *pv) {
     sensor_sample_t sample;
     
     while(1) {

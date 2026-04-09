@@ -16,6 +16,10 @@
 #define ADC_ADDR3 0x52
 #define ADC_ADDR4 0x54
 #define ADC_ADDR5 0x55
+#define ADC_ADDR6 0x56
+#define ADC_ADDR7 0x58
+#define ADC_ADDR8 0x59
+#define ADC_ADDR9 0x5A
 
 #ifdef __cplusplus
 extern "C" {

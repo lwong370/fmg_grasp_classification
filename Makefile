@@ -24,8 +24,8 @@ $(TARGET): $(OBJ) liblinear/blas/blas.a
 src/%.o: src/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-liblinear/%.o: liblinear/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+# liblinear/%.o: liblinear/%.cpp
+# 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # newton.o: newton.cpp newton.h
 # 	$(CXX) $(CFLAGS) -c -o newton.o newton.cpp
@@ -33,8 +33,8 @@ liblinear/%.o: liblinear/%.cpp
 # linear.o: linear.cpp linear.h
 # 	$(CXX) $(CFLAGS) -c -o linear.o linear.cpp
 
-liblinear/blas/blas.a: liblinear/blas/*.c liblinear/blas/*.h
-	make -C blas OPTFLAGS='$(CXXFLAGS)' CC='$(CC)';
+# liblinear/blas/blas.a: liblinear/blas/*.c liblinear/blas/*.h
+# 	make -C blas OPTFLAGS='$(CXXFLAGS)' CC='$(CC)';
 
 # Clean up
 clean:
