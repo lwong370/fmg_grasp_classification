@@ -36,10 +36,11 @@ extern "C" {
 #define TAG "MY_APP"
 
 int num_sensor_chls = 0;
+int sampleIndex = 0;
 uint8_t detected_slave_addresses[MAX_SENSOR_CHANNELS];
 
 typedef struct {
-    uint64_t timestamp;
+    int index;
     int ch[MAX_SENSOR_CHANNELS];
 } sensor_sample_t;
 
@@ -73,7 +74,8 @@ void i2c_read_sensors(void *pvParameter) {
     const float VREF = 3.3f; 
     while (1) {
         sensor_sample_t sample = {0};
-        sample.timestamp = esp_timer_get_time();
+        sample.index = sampleIndex;
+        sampleIndex++;
         for (size_t i = 0; i < num_sensor_chls; ++i) {
             const uint8_t addr = detected_slave_addresses[i];
             uint16_t code = 0;
@@ -109,12 +111,12 @@ static void init_usb_stdio(void) {
     setvbuf(stdout, nullptr, _IONBF, 0);  // unbuffered printf
 }
 
-static void usb_print_csv_sample(uint64_t curr_timestamp, int *fsr, size_t num_channels) {
+static void usb_print_csv_sample(int curr_index, int *fsr, size_t num_channels) {
     char buffer[128]; 
     int n = 0;
     bool truncated = false;
 
-    n += snprintf(buffer + n, sizeof(buffer) - n, "%" PRIu64, curr_timestamp);  // Write timestamp
+    n += snprintf(buffer + n, sizeof(buffer) - n, "%d", curr_index);  // Write timestamp
     for (size_t i = 0; i < num_channels; ++i) {
         if(n < (int)sizeof(buffer)) {
             n += snprintf(buffer + n, sizeof(buffer) - n, ",%u", (unsigned)fsr[i]);
@@ -146,7 +148,7 @@ static void usb_send_task(void *pv) {
         if (xQueueReceive(usb_queue, &sample, portMAX_DELAY) != pdTRUE) continue;
 
         if (usb_serial_jtag_is_connected()) {
-            usb_print_csv_sample(sample.timestamp, sample.ch, num_sensor_chls);
+            usb_print_csv_sample(sample.index, sample.ch, num_sensor_chls);
         }
     }
 }
