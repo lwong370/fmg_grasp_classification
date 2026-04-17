@@ -39,11 +39,6 @@ int num_sensor_chls = 0;
 int sampleIndex = 0;
 uint8_t detected_slave_addresses[MAX_SENSOR_CHANNELS];
 
-typedef struct {
-    int index;
-    int ch[MAX_SENSOR_CHANNELS];
-} sensor_sample_t;
-
 QueueHandle_t feature_queue;
 static QueueHandle_t usb_queue = NULL;
 
@@ -52,7 +47,7 @@ static inline float code_to_volts(uint16_t code, float vref) {
 }
 
 void i2c_scan() {
-    int found = 0;
+    int found = 0;  // number of slave devices discovered on I2C
     for (uint8_t addr = 1; addr < 127; ++addr) { // I2C addresses are 7-bits
         i2c_cmd_handle_t cmd = i2c_cmd_link_create();
         i2c_master_start(cmd);
@@ -82,10 +77,11 @@ void i2c_read_sensors(void *pvParameter) {
             esp_err_t e = mcp3221_read_raw(addr, &code);
             if (e == ESP_OK) {
                 float v = code_to_volts(code, VREF);
-                sample.ch[i] = code;
+                sample.ch[i].addr = addr;
+                sample.ch[i].data = code;
                 // ESP_LOGI(TAG, "MCP3221[0x%02X] code=%4u  V=%.3f", addr, code, v);
             } else {
-                //ESP_LOGW(TAG, "Read fail @ 0x%02X: %s", addr, esp_err_to_name(e));
+                ESP_LOGW(TAG, "Read fail @ 0x%02X: %s", addr, esp_err_to_name(e));
             }
         }
 
@@ -111,7 +107,7 @@ static void init_usb_stdio(void) {
     setvbuf(stdout, nullptr, _IONBF, 0);  // unbuffered printf
 }
 
-static void usb_print_csv_sample(int curr_index, int *fsr, size_t num_channels) {
+static void usb_print_csv_sample(int curr_index, sensor_x *fsr, size_t num_channels) {
     char buffer[128]; 
     int n = 0;
     bool truncated = false;
@@ -119,7 +115,7 @@ static void usb_print_csv_sample(int curr_index, int *fsr, size_t num_channels) 
     n += snprintf(buffer + n, sizeof(buffer) - n, "%d", curr_index);  // Write timestamp
     for (size_t i = 0; i < num_channels; ++i) {
         if(n < (int)sizeof(buffer)) {
-            n += snprintf(buffer + n, sizeof(buffer) - n, ",%u", (unsigned)fsr[i]);
+            n += snprintf(buffer + n, sizeof(buffer) - n, ", 0x%02X: %u", fsr[i].addr, (unsigned)fsr[i].data);
         }
     }
 
@@ -141,6 +137,69 @@ static void usb_print_csv_sample(int curr_index, int *fsr, size_t num_channels) 
     printf("%s", buffer);
 }
 
+static void usb_send_binary_sample(int curr_index, sensor_x *fsr, size_t num_channels) {
+    sensor_sample_t pkt = {};
+    pkt.index = curr_index;
+
+    for (size_t i = 0; i < num_channels && i < MAX_SENSOR_CHANNELS; ++i) {
+        pkt.ch[i].addr = fsr[i].addr;
+        pkt.ch[i].data = fsr[i].data;
+    }
+
+    const uint8_t *buf = (const uint8_t *)&pkt;
+    size_t total = sizeof(pkt);
+    size_t sent = 0;
+
+    while (sent < total) {
+        int n = usb_serial_jtag_write_bytes(
+            (const char *)(buf + sent),
+            total - sent,
+            pdMS_TO_TICKS(100)
+        );
+
+        if (n > 0) {
+            sent += (size_t)n;
+        } else {
+            break;
+        }
+    }
+}
+
+// static void usb_send_binary_sample(int curr_index, sensor_x *fsr, size_t num_channels) {
+//     sensor_sample_t pkt = {};
+//     pkt.index = (uint32_t)curr_index;
+
+//     for (int i = 0; i < num_channels && i < MAX_SENSOR_CHANNELS; ++i) {
+//         pkt.ch[i].addr = fsr[i].addr;
+//         pkt.ch[i].data = (uint16_t)fsr[i].data;
+//     }
+
+//     //usb_serial_jtag_write_bytes((const char *)&pkt, sizeof(pkt), 0);
+//     const uint8_t *buf = (const uint8_t *)&pkt;
+//     size_t total = sizeof(pkt);
+//     size_t sent = 0;
+
+//     while (sent < total) {
+//         int n = usb_serial_jtag_write_bytes((const char *)(buf + sent), total - sent, pdMS_TO_TICKS(100));
+//         if (n > 0) {
+//             sent += (size_t)n;
+//         } else {
+//             break;
+//         }
+//     }
+
+//     //ESP_LOGW(TAG, "Test1"); 
+//    // if (written != (int)sizeof(pkt)) {
+//         static uint32_t short_write_count = 0;
+//         // ESP_LOGW(TAG, "Test2"); 
+//         //short_write_count++;
+//         // if ((short_write_count % 100) == 1) {
+//         //     ESP_LOGW(TAG, "USB short write: wrote %d of %u bytes",
+//         //              written, (unsigned)sizeof(pkt));
+//         // }
+//    // }
+// }
+
 static void usb_send_task(void *pv) {
     sensor_sample_t sample;
     
@@ -148,10 +207,11 @@ static void usb_send_task(void *pv) {
         if (xQueueReceive(usb_queue, &sample, portMAX_DELAY) != pdTRUE) continue;
 
         if (usb_serial_jtag_is_connected()) {
-            usb_print_csv_sample(sample.index, sample.ch, num_sensor_chls);
+            usb_send_binary_sample(sample.index, sample.ch, num_sensor_chls);
         }
     }
 }
+
 
 void log_heap(void) {
     ESP_LOGI(TAG, "free heap (8-bit) = %u", (unsigned)heap_caps_get_free_size(MALLOC_CAP_8BIT));

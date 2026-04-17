@@ -16,6 +16,7 @@
 #include "services/gap/ble_svc_gap.h"
 #include "esp_bt.h"
 #include "../components/constants/config.h"
+#include "../components/constants/types.h"
 
 #define NOTIFY_TASK_STACK  4096
 #define FSR_QUEUE_DEPTH    3
@@ -262,7 +263,7 @@ void host_task(void *param) {
     nimble_port_run(); // This function will return only when nimble_port_stop() is executed
 }
 
-void ble_send_fsr_sample(const int *data, size_t n) {
+void ble_send_fsr_sample(const sensor_x *data, size_t n) {
 
     if (!bt_input_queue || !data || n == 0 || n > BLE_FSR_MAX_ELEMS) {
         ESP_LOGW(TAG, "enqueue failed (queue null/full or n invalid)");
