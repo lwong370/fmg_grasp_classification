@@ -8,6 +8,13 @@
 extern "C" {
 #endif
 
+/**
+ * @brief Initialize the NimBLE Bluetooth Low Energy stack.
+ *
+ * Sets up the FSR data queue, configures GAP/GATT services, sets the
+ * device name and preferred MTU, then starts the NimBLE host task.
+ * Must be called once at startup before any BLE operations.
+ */
 void ble_init(void);
 
 void ble_notify_task(void *param);

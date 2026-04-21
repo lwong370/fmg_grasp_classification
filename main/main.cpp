@@ -36,7 +36,7 @@ extern "C" {
 #define TAG "MY_APP"
 
 int num_sensor_chls = 0;
-int sampleIndex = 0;
+
 uint8_t detected_slave_addresses[MAX_SENSOR_CHANNELS];
 
 QueueHandle_t feature_queue;
@@ -46,26 +46,8 @@ static inline float code_to_volts(uint16_t code, float vref) {
     return (code / 4095.0f) * vref;
 }
 
-void i2c_scan() {
-    int found = 0;  // number of slave devices discovered on I2C
-    for (uint8_t addr = 1; addr < 127; ++addr) { // I2C addresses are 7-bits
-        i2c_cmd_handle_t cmd = i2c_cmd_link_create();
-        i2c_master_start(cmd);
-        i2c_master_write_byte(cmd, (addr << 1) | I2C_MASTER_WRITE, true); // Shifts address to left by 1 bit, making room for R/W bit
-        i2c_master_stop(cmd);
-        esp_err_t err = i2c_master_cmd_begin(I2C_PORT, cmd, pdMS_TO_TICKS(50));
-        i2c_cmd_link_delete(cmd);
-        if (err == ESP_OK) {  // Check and logs if ACK sent back
-            ESP_LOGI("SCAN", "Found @ 0x%02X", addr); 
-            detected_slave_addresses[found] = addr;
-            found++; 
-        } 
-    }
-    num_sensor_chls = found;
-    ESP_LOGI("SCAN", "Found %d device(s).", found);
-}
-
-void i2c_read_sensors(void *pvParameter) {
+void read_sensors(void *pvParameter) {
+    int sampleIndex = 0;
     const float VREF = 3.3f; 
     while (1) {
         sensor_sample_t sample = {0};
@@ -74,7 +56,7 @@ void i2c_read_sensors(void *pvParameter) {
         for (size_t i = 0; i < num_sensor_chls; ++i) {
             const uint8_t addr = detected_slave_addresses[i];
             uint16_t code = 0;
-            esp_err_t e = mcp3221_read_raw(addr, &code);
+            esp_err_t e = read_raw(addr, &code);
             if (e == ESP_OK) {
                 float v = code_to_volts(code, VREF);
                 sample.ch[i].addr = addr;
@@ -139,66 +121,36 @@ static void usb_print_csv_sample(int curr_index, sensor_x *fsr, size_t num_chann
 
 static void usb_send_binary_sample(int curr_index, sensor_x *fsr, size_t num_channels) {
     sensor_sample_t pkt = {};
-    pkt.index = curr_index;
+    pkt.index = (uint32_t)curr_index;
 
-    for (size_t i = 0; i < num_channels && i < MAX_SENSOR_CHANNELS; ++i) {
+    for (int i = 0; i < num_channels && i < MAX_SENSOR_CHANNELS; ++i) {
         pkt.ch[i].addr = fsr[i].addr;
-        pkt.ch[i].data = fsr[i].data;
+        pkt.ch[i].data = (uint16_t)fsr[i].data;
     }
 
+    //usb_serial_jtag_write_bytes((const char *)&pkt, sizeof(pkt), 0);
     const uint8_t *buf = (const uint8_t *)&pkt;
     size_t total = sizeof(pkt);
     size_t sent = 0;
 
     while (sent < total) {
-        int n = usb_serial_jtag_write_bytes(
-            (const char *)(buf + sent),
-            total - sent,
-            pdMS_TO_TICKS(100)
-        );
-
+        int n = usb_serial_jtag_write_bytes((const char *)(buf + sent), total - sent, pdMS_TO_TICKS(100));
         if (n > 0) {
             sent += (size_t)n;
         } else {
             break;
         }
     }
+
+    // if (written != (int)sizeof(pkt)) {
+        //static uint32_t short_write_count = 0;
+        //short_write_count++;
+        // if ((short_write_count % 100) == 1) {
+        //     ESP_LOGW(TAG, "USB short write: wrote %d of %u bytes",
+        //              written, (unsigned)sizeof(pkt));
+        // }
+   // }
 }
-
-// static void usb_send_binary_sample(int curr_index, sensor_x *fsr, size_t num_channels) {
-//     sensor_sample_t pkt = {};
-//     pkt.index = (uint32_t)curr_index;
-
-//     for (int i = 0; i < num_channels && i < MAX_SENSOR_CHANNELS; ++i) {
-//         pkt.ch[i].addr = fsr[i].addr;
-//         pkt.ch[i].data = (uint16_t)fsr[i].data;
-//     }
-
-//     //usb_serial_jtag_write_bytes((const char *)&pkt, sizeof(pkt), 0);
-//     const uint8_t *buf = (const uint8_t *)&pkt;
-//     size_t total = sizeof(pkt);
-//     size_t sent = 0;
-
-//     while (sent < total) {
-//         int n = usb_serial_jtag_write_bytes((const char *)(buf + sent), total - sent, pdMS_TO_TICKS(100));
-//         if (n > 0) {
-//             sent += (size_t)n;
-//         } else {
-//             break;
-//         }
-//     }
-
-//     //ESP_LOGW(TAG, "Test1"); 
-//    // if (written != (int)sizeof(pkt)) {
-//         static uint32_t short_write_count = 0;
-//         // ESP_LOGW(TAG, "Test2"); 
-//         //short_write_count++;
-//         // if ((short_write_count % 100) == 1) {
-//         //     ESP_LOGW(TAG, "USB short write: wrote %d of %u bytes",
-//         //              written, (unsigned)sizeof(pkt));
-//         // }
-//    // }
-// }
 
 static void usb_send_task(void *pv) {
     sensor_sample_t sample;
@@ -226,7 +178,7 @@ extern "C" void app_main(void) {
 
     // Enable I2C
     ESP_ERROR_CHECK(i2c_master_init());
-    i2c_scan();  
+    i2c_scan(detected_slave_addresses, &num_sensor_chls, MAX_SENSOR_CHANNELS);
     
     // Initialize USB and make USB queue
     init_usb_stdio();
@@ -235,7 +187,7 @@ extern "C" void app_main(void) {
     xTaskCreate(usb_send_task, "usb_send", 4096, NULL, 4, NULL);
 
     // Create I2C sensors
-    xTaskCreate(&i2c_read_sensors, "i2c_read_sensors", 4096, NULL, 5, NULL);
+    xTaskCreate(&read_sensors, "read_sensors", 4096, NULL, 5, NULL);
 
     log_heap();
 

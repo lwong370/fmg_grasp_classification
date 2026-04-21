@@ -10,7 +10,6 @@
 #define I2C_FREQ_HZ 300000
 
 // Slave device addresses
-// #define MCP3221_ADDR1 0x49
 #define ADC_ADDR1 0x50
 #define ADC_ADDR2 0x51
 #define ADC_ADDR3 0x52
@@ -25,8 +24,43 @@
 extern "C" {
 #endif
 
+/**
+ * @brief Initialize the I2C master peripheral.
+ *
+ * Configures the I2C bus with the pin assignments and clock speed
+ * defined in config.h, then installs the ESP-IDF I2C driver.
+ * Needs to be called once before I2C read or scan operations.
+ *
+ * @return ESP_OK on success, or an esp_err_t error code on failure.
+ */
 esp_err_t i2c_master_init(void);
-esp_err_t mcp3221_read_raw(uint8_t addr, uint16_t *out);
+
+
+/**
+ * @brief Scan the I2C bus for connected devices and populate
+ *        detected_slave_addresses with any found addresses.
+ *
+ * @param slave_addrs  Array to store 7-bit slave device addresses found
+ * @param slave_count  Set to the number of devices found
+ * @param max          Max number of slave_addrs allowed
+ */
+void i2c_scan(uint8_t *slave_addrs, int *slave_count, int max);
+
+
+/**
+ * @brief Read raw 12-bit conversion result from ADC121c021 components 
+ * of slave devices over I2C.
+ *
+ * Sends the device address with the read bit set, then reads 2 bytes
+ * (MSB then LSB) and assembles them into a single 12-bit value (0–4095).
+ * ACK is sent after the first byte to continue the read; NACK is sent
+ * after the second byte to signal end of transaction.
+ *
+ * @param addr  7-bit I2C address of the slave devices
+ * @param out   Output pointer; receives the raw ADC code (0–4095)
+ * @return      ESP_OK on success, or esp_err_t error on failure
+ */
+esp_err_t read_raw(uint8_t addr, uint16_t *out);
 
 #ifdef __cplusplus
 }
