@@ -42,10 +42,6 @@ uint8_t detected_slave_addresses[MAX_SENSOR_CHANNELS];
 QueueHandle_t feature_queue;
 static QueueHandle_t usb_queue = NULL;
 
-static inline float code_to_volts(uint16_t code, float vref) {
-    return (code / 4095.0f) * vref;
-}
-
 void read_sensors(void *pvParameter) {
     int sampleIndex = 0;
     const float VREF = 3.3f; 
@@ -58,7 +54,6 @@ void read_sensors(void *pvParameter) {
             uint16_t code = 0;
             esp_err_t e = read_raw(addr, &code);
             if (e == ESP_OK) {
-                float v = code_to_volts(code, VREF);
                 sample.ch[i].addr = addr;
                 sample.ch[i].data = code;
                 // ESP_LOGI(TAG, "MCP3221[0x%02X] code=%4u  V=%.3f", addr, code, v);
@@ -172,7 +167,10 @@ void log_heap(void) {
 }
 
 extern "C" void app_main(void) {
-    
+
+    ESP_LOGI(TAG, "sizeof(sensor_x) = %u", (unsigned)sizeof(sensor_x));
+    ESP_LOGI(TAG, "sizeof(sensor_sample_t) = %u", (unsigned)sizeof(sensor_sample_t));
+
     // Initialize Bluetooth
     ble_init();
 

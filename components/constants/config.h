@@ -13,6 +13,8 @@ extern int num_sensor_chls;
 #define WINDOW_DURATION_MS 200
 #define STEP_DURATION_MS 50
 
+extern const float VREF; 
+
 #ifdef __cplusplus
 // C++-only includes
 #include <vector>

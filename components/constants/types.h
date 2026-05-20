@@ -7,7 +7,7 @@
 
 typedef struct {
     uint8_t addr;
-    int data;
+    uint16_t data;
 } sensor_x;
 
 typedef struct {
