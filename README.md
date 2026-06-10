@@ -26,14 +26,13 @@ First step is to build a device prototype only using Force myography (FMG) as th
 | JST_SH_BM04B-SRSS-TB_1x04 | 16
 | JST_PH_S2B-PH-K_1x02 | 1
 
-## **Current Progress** 
-**I will update this as I go :D
-
-At this point I have a breadboard FMG prototype, where I've completed:
-- Selected necessary electronic componenets to build the system. Developed break-out boards required to connect SMD components to through-hole breadboard system. 
-- Wired ADC IC's to an I2C busline and developed firmware code that communicates with the ICs slave addresses to read in force sensor data
-- Use FreeRTOS to schedule tasks that collect data from force sensors and send that data to MATLAB wirelessly over BLE.
-- Designed PCB of daughterboard that MCU will rest on top of for next stage of prototyping. 
+## **Current State** 
+With this design and files in this repository, we are able to:
+- Have a motherboard designed around the ESP32-TinyS3 microcontroller using 3.3V power input.  A custom PCB was designed for interfacing with the TinyS3 MCU
+soldered directly onto the board.
+- Collect voltage readings indicating pressure levels from 9 different sensing daughterboards with unique identifier addresses.
+- Send sensor data via USB or Bluetooth. Run MATLAB scripts to get data and plot it.
+- Place circuitry in mechanical casing
 
 ## Design Phases and Decisions
 
