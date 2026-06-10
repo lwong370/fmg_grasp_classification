@@ -7,7 +7,7 @@ Designing an embedded wearable Force Myography device pipeline as a modular appl
 [View the final report](docs/lana_wong_masters_paper_final.pdf)
 
 <p align="center">
-  <img src="./images/final_assembly.png"
+  <img src="./images/final_band_assembly.png"
        alt="Completed assembly of band in mechanical casing."
        width="600">
 </p>
