@@ -34,6 +34,17 @@ soldered directly onto the board.
 - Send sensor data via USB or Bluetooth. Run MATLAB scripts to get data and plot it.
 - Place circuitry in mechanical casing
 
+## **Set-up**
+1. Download the [ESP-IDF Tools](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/tools/idf-tools.html).
+2. Solder ESP32-TinyS3 MCU on custom PCB to make motherboard
+4. Assemble daughterboards
+   - Solder jumper pins
+   - Super glue FSR on back of PCB to align the FSR legs with solder pad
+   - Solder legs of FSR
+   - Place silicone bumper on FSR      
+6. Flash code onto MCU
+7. Connect 4-pin JST connectors between motherboard and daughterboards. Ensure terminals line up.
+
 ## Design Phases and Decisions
 
 ### **Phase 1**: Breadboard prototype with FMG sensors  
