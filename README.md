@@ -2,9 +2,15 @@
 
 ## Overview
 ### Objective
-Designing an embedded wearable device pipeline as a modular application for registering biopotential signal acquisition and wireless data transmission to a computer application for prosthetic rehabilitation applications.
+Designing an embedded wearable Force Myography device pipeline as a modular application for registering force signal acquisition and wireless data transmission to a computer application for prosthetic data collection. 
 
-First step is to build a device prototype only using Force myography (FMG) as the main modality of sensing. I will eventually move on to capturing electromyography (EMG) signals, which are more complicated and require more hardware filtering. 
+[View the final report](docs/lana_wong_masters_paper_final.pdf)
+
+<p align="center">
+  <img src="./images/final_assembly.png"
+       alt="Completed assembly of band in mechanical casing."
+       width="600">
+</p>
 
 ### Built with: 
 #### *Software*
@@ -43,7 +49,12 @@ soldered directly onto the board.
    - Solder legs of FSR
    - Place silicone bumper on FSR      
 6. Flash code onto MCU
-7. Connect 4-pin JST-SH connectors between motherboard and daughterboards. Ensure terminals line up.
+   - Connect USB cord to MCU
+   - Commands in ESP-IDF CMD:
+     - idf.py build  (build the program)
+     - idf.py flash  (flash on MCU) 
+     - idf.py monitor  (Analyze logging)
+8. Connect 4-pin JST-SH connectors between motherboard and daughterboards. Ensure terminals line up.
 
 <p align="center">
   <img src="./images/mother_daughter_pins.png"
