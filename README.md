@@ -43,12 +43,12 @@ soldered directly onto the board.
    - Solder legs of FSR
    - Place silicone bumper on FSR      
 6. Flash code onto MCU
-7. Connect 4-pin JST connectors between motherboard and daughterboards. Ensure terminals line up.
+7. Connect 4-pin JST-SH connectors between motherboard and daughterboards. Ensure terminals line up.
 
 <p align="center">
   <img src="./images/mother_daughter_pins.png"
        alt="Pins of custom PCBs"
-       width="300">
+       width="900">
 </p>
 
 ## Design Phases and Decisions
