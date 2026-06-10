@@ -45,6 +45,12 @@ soldered directly onto the board.
 6. Flash code onto MCU
 7. Connect 4-pin JST connectors between motherboard and daughterboards. Ensure terminals line up.
 
+<p align="center">
+  <img src="./images/mother_daughter_pins.png"
+       alt="Pins of custom PCBs"
+       width="300">
+</p>
+
 ## Design Phases and Decisions
 
 ### **Phase 1**: Breadboard prototype with FMG sensors  
