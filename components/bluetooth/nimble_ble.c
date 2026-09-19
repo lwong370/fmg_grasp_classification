@@ -269,20 +269,20 @@ void ble_send_fsr_sample(const sensor_x *data, size_t n) {
         ESP_LOGW(TAG, "enqueue failed (queue null/full or n invalid)");
     }
 
-    // // Code for FSR buffer of size > 1
-    fsr_payload_t p;
-    p.len = n * sizeof(int);
-    memcpy(p.bytes, data, p.len);
-    BaseType_t sent = xQueueSend(bt_input_queue, &p, 0);    // Try to add item to queue
-    if (sent != pdTRUE) {
-        ESP_LOGE(TAG, "Queue is full");
-    }  
+    // Code for FSR buffer of size > 1
+    // fsr_payload_t p;
+    // p.len = n * sizeof(int);
+    // memcpy(p.bytes, data, p.len);
+    // BaseType_t sent = xQueueSend(bt_input_queue, &p, 0);    // Try to add item to queue
+    // if (sent != pdTRUE) {
+    //     ESP_LOGE(TAG, "Queue is full");
+    // }  
 
     // Code for FSR buffer of size 1
-    // fsr_payload_t p;
-    // p.len = n * sizeof(int32_t);
-    // memcpy(p.bytes, data, p.len);
-    // xQueueOverwrite(bt_input_queue, &p); 
+    fsr_payload_t p;
+    p.len = n * sizeof(int32_t);
+    memcpy(p.bytes, data, p.len);
+    xQueueOverwrite(bt_input_queue, &p); 
 
 }
 

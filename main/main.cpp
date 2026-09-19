@@ -58,7 +58,7 @@ void read_sensors(void *pvParameter) {
                 sample.ch[i].data = code;
                 // ESP_LOGI(TAG, "MCP3221[0x%02X] code=%4u  V=%.3f", addr, code, v);
             } else {
-                ESP_LOGW(TAG, "Read fail @ 0x%02X: %s", addr, esp_err_to_name(e));
+                // ESP_LOGW(TAG, "Read fail @ 0x%02X: %s", addr, esp_err_to_name(e));
             }
         }
 
